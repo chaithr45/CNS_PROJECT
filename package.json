@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node server/index.js --no-open",
     "demo": "node server/index.js",
-    "test": "node --test test/",
+    "test": "node test/run-all.js",
     "e2e": "playwright test",
     "bench": "node bench/bench.js",
     "vectors": "node test/make-vectors.js",

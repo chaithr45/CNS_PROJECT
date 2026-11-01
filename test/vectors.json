@@ -1,0 +1,38 @@
+{
+  "generatedBy": "node:crypto (OpenSSL) — test/make-vectors.js",
+  "fips197": {
+    "note": "FIPS-197 Appendix C.1 (AES-128)",
+    "key": "000102030405060708090a0b0c0d0e0f",
+    "plaintext": "00112233445566778899aabbccddeeff",
+    "ciphertext": "69c4e0d86a7b0430d8cdb78070b4c55a"
+  },
+  "common": {
+    "key": "0b30557a9fc4e90e33587da2c7ec1136",
+    "macKey": "6388add2f71c41668bb0d5fa1f44698eb3d8fd22476c91b6db00254a6f94b9de",
+    "plaintext": "03284d7297bce1062b50759abfe4092e53789dc2e70c31567ba0c5ea0f34597ea3c8ed12375c81a6cbf0153a5f84a9cef3183d6287acd1f61b40658aafd4f91e",
+    "iv16": "c8ed12375c81a6cbf0153a5f84a9cef3",
+    "iv12": "32577ca1c6eb10355a7fa4c9",
+    "aad": "7b2274223a226672616d65222c22736571223a377d"
+  },
+  "ecb": {
+    "ciphertext": "9432b0ddd234e49d66e6643af86828f0441902d749e2a955223ec95211cac9183dfa4e5932804f096203aefcb4038bc4b4b27192de7f5ed005d07de5f61541a1"
+  },
+  "cbc": {
+    "ciphertext": "23a9be4ba107fe7c5c4e262c64c71e8054e572348b9d3cbb6718feb6f1a3f3f75f17ebc0d1e23e5fb57022eec3cce4923fd2910cef761f7dadce695c68c981c15945119b231c010005a52bb6a7e74b8a"
+  },
+  "ctr": {
+    "ciphertext": "f7f1f35b449dddbfa49a295126f510b19e6264f4797e3fcc31212f5523fdec6ce07e1deda77527e7225f6ec43ff882b0cdc962341b2402563a33294a67a6abb8"
+  },
+  "gcm": {
+    "ciphertextAndTag": "b3369e2106636a932aca79ea36e77b92394013ab6fa5dea528c17114451a0073cbded72c5c13b395148592068b4df174f88b4b1e6ffacb638e23234920bac6193ea4f2608ce5774c9fd63d7b278cd336"
+  },
+  "hmac": {
+    "tag": "c7a3f7bfd24c66f8a770c678c1b6e30320c565e464b582609efcf8780de65399"
+  },
+  "hkdf": {
+    "ikm": "072c51769bc0e50a2f54799ec3e80d32577ca1c6eb10355a7fa4c9ee13385d82",
+    "sid": "test-session",
+    "info": "CipherCam v1 keys",
+    "okm": "935278182df72f810289c1ccff9b86358aabff949184275e2157a1dbcd14180ccc4bcb4bc78fd030f99b2fcc4e47a951b9b60498"
+  }
+}
