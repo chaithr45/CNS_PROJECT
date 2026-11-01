@@ -62,8 +62,13 @@ async function restart() {
   const sid = toHex(randomBytes(4));
   state.sid = sid;
   state.mitmActive = state.attacks.mitm.on;
+  // New session: Bob forgets the old picture, counters AND the last alert (otherwise a
+  // "REPLAY REJECTED" from step 6 stayed on screen for 1.5 s into the next step).
   for (const k in counts) counts[k] = 0;
+  lastOkAt = 0; lastBadAt = 0; lastBad = null; mode = null;
+  $('#bobBar').classList.add('hidden');
   bobScreen.clear(0);
+  refreshBob();
   sess = { sid, gen: my, tx: null, rx: createReceiverState({ sid }), seq: 0, mitm: null, safety: { alice: null, bob: null } };
   const s = sess;
   log(`New session ${sid} · ${MODES[state.mode].label}${state.mitmActive ? ' · MITM' : ''}`, state.mitmActive ? 'bad' : 'info');
@@ -156,6 +161,7 @@ function toBob(headerBytes, payload) {
 async function bobReceive(s, headerBytes, payload) {
   if (s !== sess) return;
   const r = await receiveFrame(s.rx, headerBytes, payload);
+  if (s !== sess) return;               // a new session started while this frame was being checked
   if (r.header?.mode) {
     mode = r.header.mode;
     $('#integ').className = `badge ${MODES[mode].integrity ? 'ok' : 'warn'}`;
@@ -292,8 +298,9 @@ function render() {
   v.className = `st-verdict ${m === true ? 'match' : m === false ? 'mismatch' : ''}`;
   v.textContent = m === true ? '✓ MATCH' : m === false ? '✗ MISMATCH' : '… waiting';
 }
-setInterval(() => {
-  bobFps = bobFrames; bobFrames = 0;
+setInterval(() => { bobFps = bobFrames; bobFrames = 0; }, 1000);
+setInterval(refreshBob, 250);
+function refreshBob() {
   $('#cAcc').textContent = `✓ accepted ${counts.accepted}`;
   $('#cTam').textContent = `🛡 tampered ${counts.tamper}`;
   $('#cRep').textContent = `⟲ replayed ${counts.replay}`;
@@ -309,7 +316,7 @@ setInterval(() => {
     if (Date.now() - lastOkAt < 1500) { el.className = 'st-alert ok'; el.textContent = MODES[mode]?.integrity ? '✓ Tag + counter verified — accepted' : '✓ Accepted — this mode has no checks'; }
     else { el.className = 'st-alert'; el.textContent = 'Waiting for frames…'; }
   }
-}, 250);
+}
 
 window.__ciphercam = {
   role: 'solo',

@@ -47,15 +47,20 @@ function party(port, role) {
   let gen = 0;
   async function startSession(sid) {
     const my = ++gen;
-    c.sid = sid; c.keys = null; c.safety = null; c.peerPub = null;
+    // Forget the previous session's key pair too (like the pages, which start a fresh
+    // session object): a fast peer's hello must never be combined with an OLD private key.
+    c.sid = sid; c.kp = null; c.keys = null; c.safety = null; c.peerPub = null; c.earlyHello = null;
     c.onNewSession?.(sid);
     const kp = await generateKeyPair();
     if (my !== gen) return;
     c.kp = kp;
     c.send({ t: 'hello', sid, role, pub: toBase64(kp.pubRaw) });
+    // The peer's key may have arrived while ours was still being made (same as the pages).
+    if (c.earlyHello?.sid === sid) onHello(c.earlyHello).catch(() => {});
   }
   async function onHello(h) {
-    if (h.sid !== c.sid || !c.kp) return;
+    if (h.sid !== c.sid) return;
+    if (!c.kp) { c.earlyHello = h; return; }
     const peer = fromBase64(h.pub);
     const my = gen;
     const keys = await deriveSessionKeys(c.kp.privateKey, peer, h.sid);

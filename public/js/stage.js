@@ -19,7 +19,7 @@ const net = connectWS('stage', { onMessage, indicator: $('#conn') });
 
 // ---------------------------------------------------------------- server messages
 function onMessage({ header }) {
-  if (header.t === 'state') { state = header.state; render(); }
+  if (header.t === 'state') { state = header.state; render(); refreshBob(); }
   if (header.t === 'event') addEvent(header);
 }
 
@@ -216,22 +216,34 @@ function render() {
 // Bob's status, read from his panel (same origin) four times a second.
 const frames = { alice: $('#fAlice'), eve: $('#fEve'), bob: $('#fBob') };
 const hook = (name) => { try { return frames[name].contentWindow.__ciphercam || null; } catch { return null; } };
-setInterval(() => {
+// Only Bob's status for the CURRENT session is shown: right after a step change the old
+// session's alerts and counters disappear at once instead of lingering.
+const ZERO = { accepted: 0, tamper: 0, replay: 0, decrypt: 0 };
+setInterval(refreshBob, 250);
+function refreshBob() {
   const bob = hook('bob');
-  if (!bob) return;
-  const c = bob.counts;
-  $('#cAcc').textContent = `✓ accepted ${c.accepted}`;
-  $('#cTam').textContent = `🛡 tampered ${c.tamper}`;
-  $('#cRep').textContent = `⟲ replayed ${c.replay}`;
-  $('#cDec').textContent = `⚠ errors ${c.decrypt}`;
-  for (const [id, n] of [['#cTam', c.tamper], ['#cRep', c.replay], ['#cDec', c.decrypt]]) $(id).className = `badge ${n ? 'bad' : ''}`;
+  if (!bob || !state) return;
+  if (bob.sid !== state.sid) {
+    showBob(ZERO);
+    $('#bobAlert').className = 'st-alert';
+    $('#bobAlert').textContent = '🔑 New session — exchanging keys…';
+    return;
+  }
+  showBob(bob.counts);
   const last = bob.last;
   const el = $('#bobAlert');
   const recentBad = Date.now() - bob.lastBadAt < 1500;
   if (recentBad && last && !last.ok) { el.className = 'st-alert bad'; el.textContent = `⛔ ${last.reason}`; }
   else if (Date.now() - bob.lastOkAt < 1500) { el.className = 'st-alert ok'; el.textContent = MODES[bob.mode]?.integrity ? '✓ Tag + counter verified — accepted' : '✓ Accepted — this mode has no checks'; }
   else { el.className = 'st-alert'; el.textContent = 'Waiting for frames…'; }
-}, 250);
+}
+function showBob(c) {
+  $('#cAcc').textContent = `✓ accepted ${c.accepted}`;
+  $('#cTam').textContent = `🛡 tampered ${c.tamper}`;
+  $('#cRep').textContent = `⟲ replayed ${c.replay}`;
+  $('#cDec').textContent = `⚠ errors ${c.decrypt}`;
+  for (const [id, n] of [['#cTam', c.tamper], ['#cRep', c.replay], ['#cDec', c.decrypt]]) $(id).className = `badge ${n ? 'bad' : ''}`;
+}
 
 // QR code for audience phones.
 (async () => {

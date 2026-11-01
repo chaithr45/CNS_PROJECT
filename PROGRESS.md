@@ -1,13 +1,12 @@
 # CipherCam — Progress & Handoff
-Last updated: 2026-11-01 — session 1: scaffold
+Last updated: 2026-11-01 — session 3 (handover): bug fixes + independent crypto verification
 
 ## Status
-Everything except P6.2 (backup video), P6.5 (soak running), P7.6 tick (README + start scripts written, start-demo.sh tested) and P7.7 (acceptance) is done.
+P0–P7.6 done. Session 3 fixed the solo stale-alert bug, a key-exchange race, made the Stage clear Bob's old alerts at once, and added an independent OpenSSL verification of all five attacks (`npm test` 54/54). Docs alignment and P7.7 acceptance are next.
 
 ## NEXT STEP
-1. When the soak finishes (`e2e/.tmp/soak.log`, results in docs/results/SOAK.md + soak.json): tick P6.5, add the soak numbers to docs/REPORT_DRAFT.md §6.2.
-2. P6.2: run `npm run video` (e2e/backup-video.js) → docs/backup-demo.webm + .mp4; check sizes < 25 MB; look at a few frames (ffmpeg -ss … -frames:v 1).
-3. Tick P7.6. Then P7.7: clean clone into a temp dir (`git clone` this branch), `npm ci`, `npm test`, `npm run e2e`, `npm run bench`, `npm start` + curl every page; paste outputs into PROGRESS.md; write the Final summary.
+1. Docs: align HOW_TO_TEST / DEMO_GUIDE / DEMO_CHEATSHEET / README with the Stage controls (no "open /alice"), correct branch name `claude/keen-gates-2y13h1`, add solo mode to README, embed the new page-*.png screenshots.
+2. P7.7: clean clone of `claude/keen-gates-2y13h1` into a temp dir → `npm ci`, `npm test`, `npm run e2e`, `npm run bench`, `npm start` + curl every page; paste outputs here; tick P7.7 + P8.1; write the Final summary.
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -67,4 +66,5 @@ npm test
 - None yet.
 
 ## Session log (newest first)
+- 2026-11-01 Session 3 (took over from an out-of-credits session; last pushed commit was 265211b — later local work of that session had NOT been pushed and was redone): baseline npm test 48/48, e2e 10/10. Fixed: solo Bob alert/counters lingering into the next step (regression test fails on old code); Bob/solo ignore in-flight frames of an old session; Stage shows Bob's status only for the current session; early-hello race (Alice/Bob dropped a peer key that arrived before their own key pair was ready); sim-clients reused an old key pair. Added test/independent.test.js (OpenSSL-only Bob/Eve vs the real relay) and a Stage layout-overlap check in e2e.
 - 2026-11-01 Session 1: P0.1 scaffold; P1 shared core + tests (36 green). Next: P2.1 server.
