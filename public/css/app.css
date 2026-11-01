@@ -166,11 +166,16 @@ body.embed .topbar, body.embed .no-embed { display: none !important; }
 body.embed .page { display: flex; flex-direction: column; padding: 0; gap: 6px; height: 100vh; max-width: none; }
 body.embed .page > .main-col { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
 body.embed .screen { border-width: 0; border-radius: 0; flex: 1; min-height: 0; aspect-ratio: auto; }
+body.embed .screen canvas { object-fit: contain; }
 body.embed .embed-info { padding: 0 8px 6px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
 body.embed .safety { font-size: 20px; }
-body.embed .badge { font-size: 13px; padding: 2px 8px; }
+body.embed .badge { font-size: clamp(13px, 2.9vw, 20px); padding: 2px 8px; }
+body.embed .screen .corner .badge { font-size: clamp(13px, 2.6vw, 18px); }
 body:not(.embed) .embed-only { display: none !important; }
 
 @media (max-width: 900px) {
   .page { grid-template-columns: 1fr; }
 }
+
+/* Badges drawn on top of video must stay readable on any picture. */
+.screen .corner .badge { background-color: rgba(10, 14, 20, .88); }

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — Stage</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/stage.css">
+</head>
+<body class="stage">
+  <div class="st-wrap">
+    <header class="st-head">
+      <div class="st-brand">🔐 CipherCam</div>
+      <span id="modeBadge" class="badge st-mode">mode</span>
+      <span id="stepBadge" class="badge">Step 1</span>
+      <span id="autoBadge" class="badge warn hidden">▶ AUTO-PLAY</span>
+      <span class="spacer"></span>
+      <span id="conn" class="conn">connecting…</span>
+      <button id="helpBtn" class="btn st-help" title="Keyboard shortcuts (?)">?</button>
+    </header>
+
+    <section class="st-panels" id="panels">
+      <div class="st-panel alice">
+        <div class="st-label">🎥 <b>ALICE</b> — sends (camera + encrypt)</div>
+        <iframe id="fAlice" src="/alice?embed=1" allow="camera; autoplay" title="Alice"></iframe>
+      </div>
+      <div class="st-panel eve">
+        <div class="st-label">😈 <b>EVE</b> — what the attacker sees</div>
+        <iframe id="fEve" src="/eve?embed=1" title="Eve"></iframe>
+      </div>
+      <div class="st-panel bob">
+        <div class="st-label">📺 <b>BOB</b> — receives (verify + decrypt)</div>
+        <iframe id="fBob" src="/bob?embed=1" title="Bob"></iframe>
+      </div>
+      <div id="overlay" class="st-overlay hidden" aria-live="polite"></div>
+    </section>
+
+    <section class="st-info">
+      <div class="st-box">
+        <div class="st-box-title">🔑 Safety numbers</div>
+        <div class="st-safety">
+          <div><span class="who alice">Alice</span> <span id="snA" class="mono">…</span></div>
+          <div><span class="who bob">Bob</span> <span id="snB" class="mono">…</span></div>
+          <div id="snVerdict" class="st-verdict">…</div>
+          <div class="st-oob">Out-of-band check (like reading the numbers aloud)</div>
+        </div>
+      </div>
+      <div class="st-box">
+        <div class="st-box-title">📺 Bob's checks</div>
+        <div id="bobAlert" class="st-alert">Waiting for frames…</div>
+        <div class="st-counts"><span id="cAcc" class="badge ok">✓ accepted 0</span><span id="cTam" class="badge">🛡 tampered 0</span><span id="cRep" class="badge">⟲ replayed 0</span><span id="cDec" class="badge">⚠ errors 0</span></div>
+      </div>
+      <div class="st-box st-logbox">
+        <div class="st-box-title">📜 Event log</div>
+        <ol id="log" class="st-log"></ol>
+      </div>
+    </section>
+
+    <section class="st-caption">
+      <div class="st-cap-title" id="capTitle">Step 1 · Encrypted call</div>
+      <div class="st-cap-text" id="capText">…</div>
+      <div class="st-cap-formula mono" id="capFormula"></div>
+    </section>
+
+    <aside class="st-side">
+      <div class="st-side-title">Demo steps</div>
+      <ol id="steps" class="st-steps"></ol>
+      <div id="subActions" class="st-sub"></div>
+      <div class="st-nav">
+        <button id="prev" class="btn" title="Previous step (←)">◀ Prev</button>
+        <button id="next" class="btn primary" title="Next step (→)">Next ▶</button>
+      </div>
+      <div class="st-nav">
+        <button id="reset" class="btn" title="Reset everything (R)">⟳ Reset</button>
+        <button id="auto" class="btn" title="Auto-play the demo (A)">▶ Auto</button>
+        <button id="clean" class="btn" title="Hide controls (F)">⛶ Clean</button>
+      </div>
+      <div class="st-qr">
+        <div id="qr" class="st-qr-img"></div>
+        <div class="small"><b>📱 Phones:</b> <span id="qrUrl" class="mono">…</span></div>
+      </div>
+    </aside>
+  </div>
+
+  <div id="help" class="st-modal hidden" role="dialog" aria-label="Keyboard shortcuts">
+    <div class="st-modal-box">
+      <h2>⌨ Keyboard shortcuts</h2>
+      <table>
+        <tr><td><kbd>→</kbd> / <kbd>←</kbd></td><td>Next / previous demo step</td></tr>
+        <tr><td><kbd>0</kbd>–<kbd>8</kbd></td><td>Jump to that step (<kbd>9</kbd> = last step)</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Reset everything: step 1, attacks off, fresh session</td></tr>
+        <tr><td><kbd>A</kbd></td><td>Auto-play the whole demo with captions (press again to stop)</td></tr>
+        <tr><td><kbd>F</kbd></td><td>Hide / show the controls (clean projector view)</td></tr>
+        <tr><td><kbd>?</kbd></td><td>Show / hide this help</td></tr>
+      </table>
+      <p class="muted">Tip: click anywhere on the dark background first so the keys reach this page.</p>
+      <button id="helpClose" class="btn">Close</button>
+    </div>
+  </div>
+  <script type="module" src="/js/stage.js"></script>
+</body>
+</html>

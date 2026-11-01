@@ -5,7 +5,7 @@ Last updated: 2026-11-01 — session 1: scaffold
 P0–P4 done (45 unit/integration tests + 3 Playwright tests green). Stage + autopilot (P5) next.
 
 ## NEXT STEP
-P5.1 Stage: create `public/stage.html` + `public/js/stage.js` (+ stage styles in app.css or a <style> block). Layout: header (title, mode badge, connection), 3 iframes side by side (/alice?embed=1, /eve?embed=1, /bob?embed=1, allow="camera"), info strip (safety numbers Alice/Bob + big ✓ MATCH / ✗ MISMATCH from BroadcastChannel 'ciphercam-oob', Bob alert area read from bob iframe window.__ciphercam, event log last 8 lines from server `event` messages), Demo steps sidebar from shared/steps.js, caption bar (caption + formula), overlay for step countdowns (state.overlay), QR for /watch. Must fit 1366×768 and 1920×1080 with no scrolling. Then P5.2: keyboard (→ ← 0-8 R A F ?), autoplay running steps' `actions`, window.__ciphercam aggregate hook.
+P5.2 verification + P6.1: write `e2e/autopilot.spec.js` — for 1366×768 and 1920×1080: open /stage, press keys (R, 0, → …) through steps 0–8, assert each step's `expect` (shared/steps.js) via window.__ciphercam, save docs/screenshots/step-<n>-<w>.png, test A/F/? keys, measure Bob fps (write docs/results/e2e-fps.json); plus a fake-camera pass (control {source:'webcam'}). Then look at every screenshot.
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -23,7 +23,7 @@ P5.1 Stage: create `public/stage.html` + `public/js/stage.js` (+ stage styles in
 - [x] P4.2 Replay record & loop (verified: e2e clicks Record 2 s → ready → Loop → GCM Bob 'REPLAY REJECTED (seq 18 ≤ last 39)' → Stop → live video resumes; server test: CTR accepts looped old frames)
 - [x] P4.3 MITM (verified: e2e MITM toggle → mitmActive, Eve view 'EVE HAS THE KEY', Bob still accepts GCM frames, safety numbers differ; toggle off → numbers match)
 - [x] P4.4 Integration tests for active attacks (verified: test/server.test.js — bit-flip, replay, MITM, watcher throttling + keystream over network, non-localhost control refused, Alice replacement, every step patch; `npm test` 45 pass)
-- [ ] P5.1 /stage layout
+- [x] P5.1 /stage layout (verified: Playwright screenshots at 1366×768 and 1920×1080 — scrollWidth/Height equal viewport (no scrolling); steps 2, 3, 4, 7 inspected: ECB silhouette, keystream recovery, star on Bob, MITM + ✗ MISMATCH)
 - [ ] P5.2 steps.js, sidebar, shortcuts, R/A/F, help overlay
 - [ ] P6.1 Full e2e autopilot + screenshots at both resolutions, reviewed
 - [ ] P6.2 Backup demo video

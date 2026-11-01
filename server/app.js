@@ -189,7 +189,8 @@ export async function createCipherServer({
       mitm = null;
       state.mitmActive = false;
     }
-    event(`New session ${state.sid} — ${MODES[state.mode].label}${state.mitmActive ? ' — ⚠ Eve is in the middle (MITM)' : ''} (${reason})`, state.mitmActive ? 'bad' : 'info');
+    event(`New session ${state.sid.slice(0, 4)} · ${MODES[state.mode].label}${state.mitmActive ? ' · MITM' : ''}`, state.mitmActive ? 'bad' : 'info');
+    say(`    (restart reason: ${reason})`);
     broadcastState();
   }
 
@@ -221,11 +222,11 @@ export async function createCipherServer({
     if (a.bitflip) {
       const was = state.attacks.bitflip.on;
       Object.assign(state.attacks.bitflip, a.bitflip);
-      if (state.attacks.bitflip.on !== was) event(state.attacks.bitflip.on ? `Eve: bit-flip ON (${STAMPS[state.attacks.bitflip.stamp]})` : 'Eve: bit-flip OFF', state.attacks.bitflip.on ? 'bad' : 'info');
+      if (state.attacks.bitflip.on !== was) event(state.attacks.bitflip.on ? `Eve bit-flips: ${STAMPS[state.attacks.bitflip.stamp]}` : 'Eve stopped bit-flipping', state.attacks.bitflip.on ? 'bad' : 'info');
     }
     if (a.mitm && a.mitm.on !== state.attacks.mitm.on) {
       state.attacks.mitm.on = a.mitm.on;
-      event(a.mitm.on ? 'Eve: MITM armed — swapping public keys at the next handshake' : 'Eve: MITM disarmed', a.mitm.on ? 'bad' : 'info');
+      event(a.mitm.on ? 'Eve armed MITM (key swap)' : 'Eve disarmed MITM', a.mitm.on ? 'bad' : 'info');
       needRestart = true; // MITM only takes effect at a new key exchange
     }
     if (needRestart) restart(who);
@@ -237,16 +238,16 @@ export async function createCipherServer({
         stopLoop();
         replay.start(r.seconds);
         r.phase = 'recording'; r.recorded = 0;
-        event(`Eve: recording ${r.seconds} s of valid frames…`, 'bad');
+        event(`Eve records ${r.seconds} s of frames`, 'bad');
       } else if (a.replay.phase === 'looping' && r.phase !== 'looping') {
         r.phase = 'looping';
         startLoop();
-        if (r.phase === 'looping') event(`Eve: LOOPING the ${(replay.duration / 1000).toFixed(1)} s recording to Bob (live video blocked)`, 'bad');
+        if (r.phase === 'looping') event(`Eve loops ${(replay.duration / 1000).toFixed(1)} s of old frames`, 'bad');
       } else if (a.replay.phase === 'off' && r.phase !== 'off') {
         const wasLooping = r.phase === 'looping';
         stopLoop();
         r.phase = replay.frames.length ? 'ready' : 'off';
-        if (wasLooping) event('Eve: replay stopped — back to live video');
+        if (wasLooping) event('Eve stopped the loop: live again');
       }
     }
     broadcastState();
@@ -302,7 +303,7 @@ export async function createCipherServer({
       r.recorded = replay.duration / 1000;
       if (done) {
         r.phase = 'ready';
-        event(`Eve: recorded ${(replay.duration / 1000).toFixed(1)} s (${replay.frames.length} frames) — ready to loop`, 'bad');
+        event(`Eve recorded ${replay.frames.length} frames`, 'bad');
         broadcastState();
       }
     }
@@ -320,9 +321,9 @@ export async function createCipherServer({
       if (header.sid !== state.sid) return;
       const fake = await m.onHello(c.role, fromBase64(header.pub));
       pub = toBase64(fake);
-      event(`Eve swapped ${c.role === 'alice' ? 'Alice' : 'Bob'}'s public key with her own`, 'bad');
+      event(`Eve swapped ${c.role === 'alice' ? 'Alice' : 'Bob'}'s public key`, 'bad');
     } else {
-      event(`${c.role === 'alice' ? 'Alice' : 'Bob'} sent an ECDH public key`);
+      event(`${c.role === 'alice' ? 'Alice' : 'Bob'} sent her/his ECDH public key`.replace('her/his', c.role === 'alice' ? 'her' : 'his'));
     }
     sendRole(other, encodeMessage({ ...header, pub }));
   }

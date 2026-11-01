@@ -145,7 +145,7 @@ async function onFrame(headerBytes, payload) {
     flashAlert(r.reason);
     // Tell the Stage's event log (not on every frame: once per kind, then every 3 s).
     if (r.kind !== lastLoggedKind || Date.now() - lastLogAt > 3000) {
-      net.event(`Bob: ${r.reason}`, 'good');
+      net.event(`Bob ${r.kind === 'tamper' ? 'rejected a TAMPERED frame' : r.kind === 'replay' ? 'rejected a REPLAYED frame' : 'got a decryption error'}`, 'good');
       lastLoggedKind = r.kind; lastLogAt = Date.now();
     }
   }

@@ -8,7 +8,13 @@ export const isEmbed = params.get('embed') === '1';
 // Call first on every page.
 //   needsCrypto: the page uses Web Crypto / the camera, which only work on https:// or localhost.
 export function initPage({ needsCrypto = false } = {}) {
-  if (isEmbed) document.body.classList.add('embed');
+  if (isEmbed) {
+    document.body.classList.add('embed');
+    // Inside the Stage: send key presses up to the Stage, so shortcuts work after a click here.
+    document.addEventListener('keydown', (e) => {
+      try { window.parent.postMessage({ type: 'stage-key', key: e.key }, location.origin); } catch { /* not in a Stage */ }
+    });
+  }
   if (needsCrypto && !(window.isSecureContext && globalThis.crypto && crypto.subtle)) {
     const b = document.createElement('div');
     b.className = 'insecure-banner';
