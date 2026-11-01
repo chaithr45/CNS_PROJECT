@@ -22,9 +22,11 @@ The demo shows five classic mistakes and the fix for each, live on a projector:
 ## Quick start — Windows
 
 1. Install **Node.js LTS** from [nodejs.org](https://nodejs.org) (accept all defaults).
-2. Download this project: on GitHub click **Code → Download ZIP** and unzip it, or `git clone` the repository.
+2. Download this project as a ZIP — the finished version is on the branch **`claude/keen-gates-2y13h1`**:
+   `https://github.com/chaithr45/CNS_PROJECT/archive/refs/heads/claude/keen-gates-2y13h1.zip`
+   (or on GitHub pick that branch, then **Code → Download ZIP**). **Right-click → Extract All**, and open the extracted folder.
 3. Double-click **`start-demo.bat`**. (The first start installs CipherCam, about 1 minute, needs internet once.)
-4. **Chrome or Edge opens the Stage** at `http://localhost:8080/stage`. Press **R**, then use the **→** key to walk through the demo.
+4. **Chrome or Edge opens the Stage** at `http://localhost:8080/stage`. Click the yellow caption bar, press **R**, then use the **→** key to walk through the demo. Everything (mode, webcam/synthetic video, grey levels, attacks) is controlled from the Stage.
 
 Keep the black server window open while you present. Close it (or press Ctrl+C in it) to stop.
 
@@ -62,12 +64,13 @@ Plan B: **`docs/backup-demo.mp4`** (and `.webm`) is a recording of the whole aut
 |---|---|
 | `npm run demo` | Start the server and open the Stage in your browser |
 | `npm start` | Start the server without opening a browser (`--no-open`) |
-| `npm test` | Unit + integration tests (Node's test runner, no browser) |
+| `npm test` | 54 unit + integration tests (Node's test runner, no browser), including an independent OpenSSL re-check of all five attacks |
 | `npm run e2e` | End-to-end tests in Chromium (Playwright): every demo step, both resolutions, screenshots |
 | `npm run bench` | Speed / overhead / leak / reject-rate per mode → `docs/results/` |
 | `npm run soak` | 10-minute auto-play reliability test → `docs/results/SOAK.md` |
 | `npm run video` | Re-record the backup video → `docs/backup-demo.webm` / `.mp4` |
 | `npm run vectors` | Regenerate the known-answer vectors in `test/vectors.json` with OpenSSL |
+| `npm run build:solo` | Build the optional static solo-mode site into `dist-solo/` |
 
 Server options: `node server/index.js --port 9000 --no-open --allow-remote-control`. The default port is 8080; if it is busy, 8081–8090 are tried and the one used is printed.
 
@@ -84,8 +87,20 @@ Server options: `node server/index.js --port 9000 --no-open --allow-remote-contr
 | `/eve` | Attacker: four views, leak meter, bit-flip / replay / MITM controls |
 | `/watch` | Read-only phone view of Eve's screen (works over plain `http://<laptop-ip>:8080`) |
 | `/selftest` | Known-answer tests of every primitive in this browser |
+| `/solo` | Optional solo mode: the whole demo in one page, no relay (see below) |
 
-Only the presenter laptop (`localhost`) can change anything. Phones can only watch.
+`/alice` and `/bob` are not needed during the demo — the Stage embeds them. Only the presenter laptop (`localhost`) can change anything. Phones can only watch.
+
+## Solo mode (optional, for sharing a link)
+
+Solo mode runs Alice, an in-memory relay with Eve's attacks, and Bob **in one browser page, with no server**, using exactly the same `shared/` modules and `server/eve-active.js` as the classroom version. Try it locally at `http://localhost:8080/solo` (same keys as the Stage).
+
+To put it online so anyone can try it over HTTPS:
+
+1. `npm run build:solo` → a static site in `dist-solo/` (relative paths, works in a sub-folder).
+2. Upload `dist-solo/` to **GitHub Pages** (e.g. push it to a `gh-pages` branch, or Settings → Pages → deploy from a folder), **Vercel** (`vercel deploy dist-solo`), Netlify or any static host. It must be served over **HTTPS** (Web Crypto and the camera need a secure context); GitHub Pages and Vercel do that automatically.
+
+For the classroom, use the Stage: it shows the real network relay, the audience `/watch` page and the event log.
 
 ---
 
@@ -104,7 +119,7 @@ Only the presenter laptop (`localhost`) can change anything. Phones can only wat
 | [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md) | Giving the live demo, step by step |
 | [docs/DEMO_CHEATSHEET.md](docs/DEMO_CHEATSHEET.md) | One printable page |
 | [docs/EXPLAINED.md](docs/EXPLAINED.md) | Every concept in plain English, with pointers to the code |
-| [docs/VIVA_QA.md](docs/VIVA_QA.md) | 43 likely viva questions with answers |
+| [docs/VIVA_QA.md](docs/VIVA_QA.md) | 45 likely viva questions with answers |
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Components, message formats, sequence diagrams, state model |
 | [docs/REPORT_DRAFT.md](docs/REPORT_DRAFT.md) | Project report draft |
 | [docs/results/RESULTS.md](docs/results/RESULTS.md) | Benchmark results |
@@ -119,6 +134,7 @@ server/      Node relay: index.js (CLI), app.js (HTTP + WebSocket + state), eve-
 shared/      Code used by BOTH browser and Node: frame.js, crypto.js, ecb.js, protocol.js,
              sender.js, receiver.js, stamps.js, steps.js
 public/      Pages (*.html), browser scripts (js/), styles (css/)
+solo/        build.js: builds the optional static solo-mode site (dist-solo/)
 test/        node:test unit + integration tests, OpenSSL test vectors
 e2e/         Playwright end-to-end tests, soak test, backup-video recorder
 bench/       Benchmark

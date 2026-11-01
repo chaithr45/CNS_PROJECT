@@ -1,6 +1,6 @@
 # CipherCam — Cheat Sheet (print me)
 
-**Start:** double-click `start-demo.bat` → Stage opens → **F11** → click the dark background → **R**.
+**Start:** double-click `start-demo.bat` → Stage opens → **F11** → click the yellow caption bar → **R**. Everything is on the Stage — never open `/alice` or `/bob`.
 **Keys:** `→`/`←` next/previous · `0`–`8` jump · `R` reset · `A` auto-play · `F` clean view · `?` help
 
 | # | Step | Press | Say this (one line) | Look for |
@@ -18,6 +18,6 @@
 
 **Formulas:** `C₁⊕C₂ = P₁⊕P₂` · `K = C₀⊕P_splash` · `(C⊕M)⊕K = P⊕M` · accept only if tag ✓ and `seq > lastSeq`
 
-**Rescue:** stuck → **R** · black panel → right-click → *Reload frame* · camera bad → `/alice` → *Synthetic scene* · frozen → Ctrl+C in the black window, run `start-demo.bat` again · disaster → play `docs/backup-demo.mp4`
+**Rescue:** stuck → **R** · black panel → right-click → *Reload frame* · camera bad → side menu **📷 Video → Synthetic** · frozen → Ctrl+C in the black window, run `start-demo.bat` again · disaster → play `docs/backup-demo.mp4`
 
 **Fixes to remember:** random IV (CBC/CTR) · unique nonce per frame · MAC: HMAC-SHA256 / AES-GCM · authenticated frame counter · safety numbers

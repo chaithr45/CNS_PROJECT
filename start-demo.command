@@ -6,7 +6,8 @@ if ! command -v node >/dev/null 2>&1; then
   read -r -p "Press Enter to close" _
   exit 1
 fi
-if [ ! -d node_modules ]; then
+# Install unless all three runtime packages are really there (repairs a half-finished install).
+if [ ! -f node_modules/ws/package.json ] || [ ! -f node_modules/aes-js/package.json ] || [ ! -f node_modules/qrcode/package.json ]; then
   echo "First start: installing CipherCam (needs internet once)..."
   npm install || { echo "npm install failed."; read -r -p "Press Enter to close" _; exit 1; }
 fi

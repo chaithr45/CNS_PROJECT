@@ -128,7 +128,7 @@ Random IV / unique nonce → **confidentiality**. MAC / AEAD tag → **data inte
 **So both sides compute the same number regardless of who is "first".**
 
 **36. 12 digits is only about 40 bits. Is that enough?**
-**For a human check against a live attacker, yes.** Eve would have to find her own key pairs whose fingerprints collide with Alice's and Bob's view *while the call is being set up*, a targeted second-preimage search of roughly 2⁴⁰ work per session. Signal uses 60 digits for long-term identity keys. You can make it longer at the cost of usability.
+**Against the Eve in our demo, yes — she uses random keys, so the two numbers match by accident only once in 10¹² sessions. Against a smarter Eve, 12 digits alone is not enough in our simple protocol, and real systems add a commitment or long-term keys.** Because Eve chooses *both* of her keys (E1 and E2) and can wait until she has seen both A and B, she could try many E1 and many E2 and look for any pair where SN(A, E1) = SN(E2, B). That is a birthday-style search of about 2²⁰ (a million) tries per side — feasible for a strong attacker who can delay the call setup. Fixes used in practice: **ZRTP** makes each side first send a hash (commitment) of its public key before seeing the other's, so Eve must guess blindly; **Signal/WhatsApp** compare 60-digit numbers of long-term identity keys that are fixed before any call. Making the number longer also helps, at the cost of usability.
 
 **37. How else could the key exchange be authenticated?**
 **Certificates and a PKI (like TLS), pre-shared keys, signed keys (e.g. a long-term identity key signing the ECDH key), or a PAKE with a shared password.**
@@ -144,7 +144,7 @@ Random IV / unique nonce → **confidentiality**. MAC / AEAD tag → **data inte
 **Never roll your own crypto: Web Crypto is a standard, audited, constant-time native implementation.** We only use the `aes-js` library for ECB, because Web Crypto deliberately doesn't offer ECB. We cross-check everything against OpenSSL (`npm test`) and FIPS-197.
 
 **40. How did you test it?**
-**`npm test`: 48 unit/integration tests**, including OpenSSL cross-checks for every mode, FIPS-197, attack properties (ECB leak > 50%, `C₁⊕C₂ = P₁⊕P₂`, bit-flip = original ⊕ mask, replays rejected, MITM detected), and the real server with simulated clients. **`npm run e2e`**: Playwright drives the real Stage in Chromium through every step at two resolutions. **`npm run bench`** measures every mode. **`npm run soak`**: a 10-minute auto-play loop.
+**`npm test`: 54 unit/integration tests**, including OpenSSL cross-checks for every mode, FIPS-197, attack properties (ECB leak > 50%, `C₁⊕C₂ = P₁⊕P₂`, bit-flip = original ⊕ mask, replays rejected, MITM detected), the real server with simulated clients, and an **independent re-check of all five attacks** (question 44). **`npm run e2e`**: Playwright drives the real Stage in Chromium through every step at two resolutions. **`npm run bench`** measures every mode. **`npm run soak`**: a 10-minute auto-play loop.
 
 **41. What overhead does security add?**
 **GCM adds 28 bytes per frame (12-byte nonce + 16-byte tag) on 19,200 bytes, about 0.15%, and is actually the fastest mode in our benchmark (~0.1 ms per frame).** See `docs/results/RESULTS.md`.
@@ -154,3 +154,9 @@ Random IV / unique nonce → **confidentiality**. MAC / AEAD tag → **data inte
 
 **43. How is this different from real video calls (WebRTC)?**
 **WebRTC encrypts media with SRTP (AES-CTR/AES-GCM with per-packet sequence numbers and authentication tags) and authenticates the DTLS key exchange with certificate fingerprints.** That's exactly our step-6 fix (AEAD + counter) plus step-8 fix (fingerprints). End-to-end encrypted calls add safety-number verification on top.
+
+**44. How do you know your cryptography is real, and not just consistent with itself?**
+**`test/independent.test.js` re-implements Bob, Eve's analysis, ECDH, HKDF, every AES mode, HMAC and the safety number with OpenSSL (Node's `node:crypto`) only, and runs them against the app's real Alice through the real relay.** For all seven modes the bytes on the wire are identical to what OpenSSL produces from the same key and plaintext; ECB gives equal blocks for equal tiles; `C₀ ⊕ splash` recovers the exact live picture in `ctr-reuse`; the bit-flip delivers exactly `P ⊕ mask` in CTR and fails the OpenSSL tag check in GCM and CTR+HMAC (with the tag bytes untouched); replayed GCM frames have a *valid* tag but are rejected by the counter; and under MITM the OpenSSL Bob accepts every GCM frame while the safety numbers differ. On every frame the app's own receiver must give the same verdict as the OpenSSL one. The browser `/selftest` page also checks the official FIPS-197 vector.
+
+**45. Your audience page `/watch` runs over plain `http://`. Isn't that insecure?**
+**It only shows what Eve already sees (ciphertext, or Eve's own decryption during the MITM step), so there is nothing secret on it, and it cannot change anything.** It uses no Web Crypto (which needs a secure context) and no camera. The relay accepts control messages only from `localhost`, and a phone that tries to connect as Alice, Bob, Eve or the Stage is disconnected (close code 4003). This is the "least privilege" principle: remote viewers get read-only access.

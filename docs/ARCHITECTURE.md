@@ -108,6 +108,8 @@ sequenceDiagram
   Note over A,B: SN(A,B) = SN(A,B) → ✓ MATCH
 ```
 
+The order of the two `hello` messages does not matter. If a peer's `hello` arrives before a page has finished making its own key pair, the page keeps it (`earlyHello`) and uses it as soon as its key pair is ready. If a page (re)connects later, the relay sends `peer-joined` and the other side sends its `hello` again.
+
 ### MITM
 
 ```mermaid
