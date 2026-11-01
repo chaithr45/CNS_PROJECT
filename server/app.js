@@ -381,6 +381,8 @@ export async function createCipherServer({
       if (PAGES[pn]) return serveFile(res, path.join(PUBLIC, PAGES[pn]));
       if (pn === '/vendor/aes-js/index.js') return serveFile(res, AESJS);
       if (pn === '/vectors.json') return serveFile(res, path.join(ROOT, 'test', 'vectors.json'));
+      // Eve's attack code, so the single-page solo mode can run it in the browser too.
+      if (pn === '/server/eve-active.js') return serveFile(res, path.join(ROOT, 'server', 'eve-active.js'));
       if (pn === '/favicon.ico') { res.writeHead(204); res.end(); return; }
       if (pn === '/api/info') {
         res.writeHead(200, { 'content-type': 'application/json', 'cache-control': 'no-store' });

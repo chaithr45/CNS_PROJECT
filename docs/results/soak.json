@@ -1,0 +1,211 @@
+{
+  "when": "2026-11-01T04:25:29.349Z",
+  "minutes": 10,
+  "samples": [
+    {
+      "heapMB": 4.511506080627441,
+      "step": 3,
+      "autoplay": true,
+      "bobTotal": 306,
+      "t": 30,
+      "serverHeapMB": 43.2286376953125,
+      "errors": 0,
+      "newFrames": 306
+    },
+    {
+      "heapMB": 6.986575126647949,
+      "step": 5,
+      "autoplay": true,
+      "bobTotal": 606,
+      "t": 60,
+      "serverHeapMB": 43.412506103515625,
+      "errors": 0,
+      "newFrames": 300
+    },
+    {
+      "heapMB": 6.689215660095215,
+      "step": 7,
+      "autoplay": true,
+      "bobTotal": 826,
+      "t": 90,
+      "serverHeapMB": 43.797523498535156,
+      "errors": 0,
+      "newFrames": 220
+    },
+    {
+      "heapMB": 5.001507759094238,
+      "step": 2,
+      "autoplay": true,
+      "bobTotal": 1127,
+      "t": 120,
+      "serverHeapMB": 43.838356018066406,
+      "errors": 0,
+      "newFrames": 301
+    },
+    {
+      "heapMB": 4.878582954406738,
+      "step": 5,
+      "autoplay": true,
+      "bobTotal": 1427,
+      "t": 150,
+      "serverHeapMB": 43.9158935546875,
+      "errors": 0,
+      "newFrames": 300
+    },
+    {
+      "heapMB": 7.698615074157715,
+      "step": 7,
+      "autoplay": true,
+      "bobTotal": 1648,
+      "t": 180,
+      "serverHeapMB": 43.95576477050781,
+      "errors": 0,
+      "newFrames": 221
+    },
+    {
+      "heapMB": 6.332090377807617,
+      "step": 1,
+      "autoplay": true,
+      "bobTotal": 1950,
+      "t": 210,
+      "serverHeapMB": 43.945762634277344,
+      "errors": 0,
+      "newFrames": 302
+    },
+    {
+      "heapMB": 7.053339004516602,
+      "step": 4,
+      "autoplay": true,
+      "bobTotal": 2251,
+      "t": 240,
+      "serverHeapMB": 43.95307159423828,
+      "errors": 0,
+      "newFrames": 301
+    },
+    {
+      "heapMB": 4.913576126098633,
+      "step": 6,
+      "autoplay": true,
+      "bobTotal": 2515,
+      "t": 270,
+      "serverHeapMB": 43.959144592285156,
+      "errors": 0,
+      "newFrames": 264
+    },
+    {
+      "heapMB": 4.250582695007324,
+      "step": 8,
+      "autoplay": true,
+      "bobTotal": 2771,
+      "t": 300,
+      "serverHeapMB": 44.08910369873047,
+      "errors": 0,
+      "newFrames": 256
+    },
+    {
+      "heapMB": 4.873875617980957,
+      "step": 3,
+      "autoplay": true,
+      "bobTotal": 3072,
+      "t": 330,
+      "serverHeapMB": 44.108116149902344,
+      "errors": 0,
+      "newFrames": 301
+    },
+    {
+      "heapMB": 4.5395355224609375,
+      "step": 5,
+      "autoplay": true,
+      "bobTotal": 3372,
+      "t": 360,
+      "serverHeapMB": 44.04798126220703,
+      "errors": 0,
+      "newFrames": 300
+    },
+    {
+      "heapMB": 7.179166793823242,
+      "step": 7,
+      "autoplay": true,
+      "bobTotal": 3592,
+      "t": 390,
+      "serverHeapMB": 44.09281921386719,
+      "errors": 0,
+      "newFrames": 220
+    },
+    {
+      "heapMB": 4.985132217407227,
+      "step": 2,
+      "autoplay": true,
+      "bobTotal": 3893,
+      "t": 420,
+      "serverHeapMB": 44.0484619140625,
+      "errors": 0,
+      "newFrames": 301
+    },
+    {
+      "heapMB": 5.78067684173584,
+      "step": 5,
+      "autoplay": true,
+      "bobTotal": 4195,
+      "t": 450,
+      "serverHeapMB": 44.07078552246094,
+      "errors": 0,
+      "newFrames": 302
+    },
+    {
+      "heapMB": 5.317248344421387,
+      "step": 6,
+      "autoplay": true,
+      "bobTotal": 4415,
+      "t": 480,
+      "serverHeapMB": 44.05658721923828,
+      "errors": 0,
+      "newFrames": 220
+    },
+    {
+      "heapMB": 5.558088302612305,
+      "step": 0,
+      "autoplay": true,
+      "bobTotal": 4716,
+      "t": 511,
+      "serverHeapMB": 44.140655517578125,
+      "errors": 0,
+      "newFrames": 301
+    },
+    {
+      "heapMB": 4.981934547424316,
+      "step": 3,
+      "autoplay": true,
+      "bobTotal": 5017,
+      "t": 541,
+      "serverHeapMB": 44.11418914794922,
+      "errors": 0,
+      "newFrames": 301
+    },
+    {
+      "heapMB": 5.188817024230957,
+      "step": 6,
+      "autoplay": true,
+      "bobTotal": 5308,
+      "t": 571,
+      "serverHeapMB": 44.14704895019531,
+      "errors": 0,
+      "newFrames": 291
+    },
+    {
+      "heapMB": 6.437655448913574,
+      "step": 8,
+      "autoplay": true,
+      "bobTotal": 5539,
+      "t": 601,
+      "serverHeapMB": 44.15217590332031,
+      "errors": 0,
+      "newFrames": 231
+    }
+  ],
+  "consoleErrors": [],
+  "browserHeapGrowthPercent": -6.994301739054295,
+  "serverHeapGrowthPercent": 0.9661542466154015,
+  "minFramesPer30s": 220,
+  "pass": true
+}

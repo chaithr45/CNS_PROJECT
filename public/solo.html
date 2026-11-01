@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — Solo mode</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <link rel="stylesheet" href="/css/stage.css">
+  <script src="/vendor/aes-js/index.js"></script>
+  <style>
+    .st-panel > .screen { flex: 1; min-height: 0; aspect-ratio: auto; border: 0; border-radius: 0; }
+    .st-panel > .screen canvas { object-fit: contain; }
+    .solo-info { display: flex; gap: 6px; flex-wrap: wrap; padding: 4px 8px; }
+    .solo-info .badge { font-size: 15px; }
+    .solo-note { font-size: 14px; color: var(--muted); }
+  </style>
+</head>
+<body class="stage">
+  <div class="st-wrap">
+    <header class="st-head">
+      <div class="st-brand">🔐 CipherCam <span class="muted" style="font-size:18px;font-weight:600">solo</span></div>
+      <span id="modeBadge" class="badge st-mode">mode</span>
+      <span id="stepBadge" class="badge">Step 1</span>
+      <span id="autoBadge" class="badge warn hidden">▶ AUTO-PLAY</span>
+      <span class="spacer"></span>
+      <span class="solo-note">Everything runs in this one page — no server.</span>
+      <button id="helpBtn" class="btn st-help" title="Keyboard shortcuts (?)">?</button>
+    </header>
+
+    <section class="st-panels">
+      <div class="st-panel alice">
+        <div class="st-label">🎥 <b>ALICE</b> — sends (camera + encrypt)</div>
+        <div class="screen"><canvas id="cAlice"></canvas><div class="corner"><span id="srcBadge" class="badge">◎ synthetic</span></div></div>
+        <div class="solo-info"><span class="badge">🔑 <span id="sAlice" class="mono">…</span></span><span id="seqBadge" class="badge">seq 0</span></div>
+      </div>
+      <div class="st-panel eve">
+        <div class="st-label">😈 <b>EVE</b> — what the attacker sees</div>
+        <div class="screen" id="eveScreen"></div>
+        <div class="solo-info" data-eve="leakbox"><span class="badge">Leak meter <b data-eve="leak">0%</b></span><div class="meter" style="flex:1;min-width:60px"><div data-eve="leakbar"></div></div></div>
+      </div>
+      <div class="st-panel bob">
+        <div class="st-label">📺 <b>BOB</b> — receives (verify + decrypt)</div>
+        <div class="screen"><canvas id="cBob"></canvas><div class="corner"><span id="integ" class="badge">Integrity: OFF</span></div><div id="bobBar" class="banner-red hidden"></div></div>
+        <div class="solo-info"><span class="badge">🔑 <span id="sBob" class="mono">…</span></span><span id="bobAcc" class="badge ok">✓ 0</span><span id="bobRej" class="badge">✗ 0</span></div>
+      </div>
+      <div id="overlay" class="st-overlay hidden"></div>
+    </section>
+
+    <section class="st-info">
+      <div class="st-box">
+        <div class="st-box-title">🔑 Safety numbers</div>
+        <div class="st-safety">
+          <div><span class="who alice">Alice</span> <span id="snA" class="mono">…</span></div>
+          <div><span class="who bob">Bob</span> <span id="snB" class="mono">…</span></div>
+          <div id="snVerdict" class="st-verdict">…</div>
+          <div class="st-oob">Out-of-band check (like reading the numbers aloud)</div>
+        </div>
+      </div>
+      <div class="st-box">
+        <div class="st-box-title">📺 Bob's checks</div>
+        <div id="bobAlert" class="st-alert">Waiting for frames…</div>
+        <div class="st-counts"><span id="cAcc" class="badge ok">✓ accepted 0</span><span id="cTam" class="badge">🛡 tampered 0</span><span id="cRep" class="badge">⟲ replayed 0</span><span id="cDec" class="badge">⚠ errors 0</span></div>
+      </div>
+      <div class="st-box st-logbox">
+        <div class="st-box-title">📜 Event log</div>
+        <ol id="log" class="st-log"></ol>
+      </div>
+    </section>
+
+    <section class="st-caption">
+      <div class="st-cap-title" id="capTitle">Step 1</div>
+      <div class="st-cap-text" id="capText">…</div>
+      <div class="st-cap-formula mono" id="capFormula"></div>
+    </section>
+
+    <aside class="st-side">
+      <div class="st-side-title">Demo steps</div>
+      <ol id="steps" class="st-steps"></ol>
+      <div id="subActions" class="st-sub"></div>
+      <div class="st-nav">
+        <button id="prev" class="btn">◀ Prev</button>
+        <button id="next" class="btn primary">Next ▶</button>
+      </div>
+      <div class="st-nav">
+        <button id="reset" class="btn">⟳ Reset</button>
+        <button id="auto" class="btn">▶ Auto</button>
+        <button id="clean" class="btn">⛶ Clean</button>
+      </div>
+      <button id="cam" class="btn">📷 Use my webcam</button>
+      <div class="solo-note">Solo mode: Alice, Eve (passive views + active attacks) and Bob run in this page with an in-memory relay, using the same code as the classroom version.</div>
+    </aside>
+  </div>
+  <div id="help" class="st-modal hidden" role="dialog" aria-label="Keyboard shortcuts">
+    <div class="st-modal-box">
+      <h2>⌨ Keyboard shortcuts</h2>
+      <table>
+        <tr><td><kbd>→</kbd> / <kbd>←</kbd></td><td>Next / previous demo step</td></tr>
+        <tr><td><kbd>0</kbd>–<kbd>8</kbd></td><td>Jump to that step</td></tr>
+        <tr><td><kbd>R</kbd></td><td>Reset: step 1, attacks off, fresh keys</td></tr>
+        <tr><td><kbd>A</kbd></td><td>Auto-play the whole demo</td></tr>
+        <tr><td><kbd>F</kbd></td><td>Hide / show the controls</td></tr>
+      </table>
+      <button id="helpClose" class="btn">Close</button>
+    </div>
+  </div>
+  <script type="module" src="/js/solo.js"></script>
+</body>
+</html>

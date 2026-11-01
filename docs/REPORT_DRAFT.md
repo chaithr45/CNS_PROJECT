@@ -124,7 +124,7 @@ The frame header (`sid, seq, mode, iv, w, h, levels, ts`) is sent as UTF-8 JSON;
 
 MITM in GCM: Bob accepted **100/100** re-encrypted frames; the safety numbers differed (e.g. `2929 4654 3764` vs `0690 8823 8149`).
 
-In the browser, with all three Stage panels open in headless Chromium, Bob sustained **10.0 fps** in AES-GCM with about 4 ms end-to-end latency (`docs/results/e2e-fps.json`). The 10-minute auto-play soak test results are in `docs/results/SOAK.md`.
+In the browser, with all three Stage panels open in headless Chromium, Bob sustained **10.0 fps** in AES-GCM with about 4 ms end-to-end latency (`docs/results/e2e-fps.json`). In a **10-minute auto-play soak test** (`docs/results/SOAK.md`) there were **0 console errors**, Bob never accepted fewer than 220 frames in any 30-second window, and memory stayed flat (browser heap 6.0 → 5.5 MB, server heap 43.7 → 44.1 MB).
 
 ### 6.3 Discussion
 

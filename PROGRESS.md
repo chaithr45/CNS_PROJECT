@@ -31,7 +31,7 @@ Everything except P6.2 (backup video), P6.5 (soak running), P7.6 tick (README + 
 - [ ] P6.2 Backup demo video
 - [x] P6.3 npm run bench + docs/results (verified: `npm run bench` → docs/results/bench.csv + RESULTS.md; ECB leak 89.6 %, others 0 %; ctr-hmac/gcm reject 100 % of bit-flipped and replayed frames, others 0 %; MITM 100/100 accepted, safety MISMATCH; slowest mode 0.79 ms/frame)
 - [x] P6.4 /selftest (verified: e2e/selftest.spec.js — 13/13 known-answer tests PASS in Chromium: FIPS-197 via aes-js and Web Crypto, ECB/CBC/CTR/GCM/HMAC/HKDF vs OpenSSL vectors, GCM tamper rejection, ECDH, safety number, splash byte-identical, all modes round-trip; screenshot docs/screenshots/selftest.png)
-- [ ] P6.5 10-minute soak + no-external-URL test
+- [x] P6.5 10-minute soak + no-external-URL test (verified: `npm run soak` → PASS: 0 console errors in 10 min of looping auto-play, min 220 Bob frames / 30 s, browser heap 6.0→5.5 MB, server heap 43.7→44.1 MB (docs/results/SOAK.md); test/no-external-urls.test.js 3/3 pass)
 - [x] P7.1 DEMO_GUIDE.md + DEMO_CHEATSHEET.md (verified: every step 0–8 has Press / Say / audience sees (embedded screenshot) / If it doesn't work; setup A+B, three checklists, timing, recovery playbook, pitch, camera tuning; link checker: all relative links/images exist)
 - [x] P7.2 EXPLAINED.md (verified: all 14 concepts + posterize/tiling + what each attack proves; every file→function pointer exists in the code)
 - [x] P7.3 VIVA_QA.md (verified: 43 Q&As incl. all 9 example questions from the spec)
