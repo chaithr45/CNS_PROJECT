@@ -16,7 +16,8 @@ let session = null;           // { sid, kp, keys, rx, safety }
 let gen = 0;
 let chain = Promise.resolve();
 let peerSafety = null;
-const counts = { accepted: 0, tamper: 0, replay: 0, decrypt: 0 };
+const counts = { accepted: 0, tamper: 0, replay: 0, decrypt: 0 };   // this session
+const totals = { accepted: 0, tamper: 0, replay: 0, decrypt: 0 };   // earlier sessions
 let last = { ok: null, kind: null, reason: 'waiting', at: 0 };
 let lastOkAt = 0, lastBadAt = 0, latency = 0, fps = 0, framesThisSec = 0;
 let lastLoggedKind = null, lastLogAt = 0;
@@ -76,6 +77,15 @@ function onState(s) {
 async function startSession(s) {
   const my = ++gen;
   session = { sid: s.sid, kp: null, keys: null, rx: createReceiverState({ sid: s.sid }), safety: null };
+  // New session: forget the old picture and the per-session counters.
+  for (const k of Object.keys(counts)) { totals[k] += counts[k]; counts[k] = 0; }
+  screen.clear(0);
+  $('#wait').textContent = 'New session — waiting for the first valid frame…';
+  $('#wait').classList.remove('hidden');
+  $('#alertBar').classList.add('hidden');
+  lastBadAt = 0; lastLoggedKind = null;
+  last = { ok: null, kind: null, reason: 'new session', at: Date.now() };
+  setStatus('New session: key exchange…');
   showSafety();
   const kp = await generateKeyPair();     // fresh ECDH key pair for this session
   if (my !== gen) return;
@@ -176,6 +186,7 @@ $('#csv').onclick = () => {
 window.__ciphercam = {
   role: 'bob',
   counts,
+  get totals() { const t = {}; for (const k in counts) t[k] = totals[k] + counts[k]; return t; },
   get last() { return last; },
   get fps() { return fps; },
   get latency() { return latency; },
