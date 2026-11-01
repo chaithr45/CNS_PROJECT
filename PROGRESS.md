@@ -2,10 +2,12 @@
 Last updated: 2026-11-01 — session 1: scaffold
 
 ## Status
-P0–P4 done (45 unit/integration tests + 3 Playwright tests green). Stage + autopilot (P5) next.
+P0–P6.1, P6.3, P6.4 done. Remaining: P6.2 backup video, P6.5 soak (script e2e/soak.js written, not yet run), P7 docs (EXPLAINED.md drafted), P7.7 acceptance.
 
 ## NEXT STEP
-P5.2 verification + P6.1: write `e2e/autopilot.spec.js` — for 1366×768 and 1920×1080: open /stage, press keys (R, 0, → …) through steps 0–8, assert each step's `expect` (shared/steps.js) via window.__ciphercam, save docs/screenshots/step-<n>-<w>.png, test A/F/? keys, measure Bob fps (write docs/results/e2e-fps.json); plus a fake-camera pass (control {source:'webcam'}). Then look at every screenshot.
+1. P6.5: run `npm run soak` (10 min, writes docs/results/soak.json + SOAK.md) and `node test/run-all.js no-external` (already passing); tick.
+2. P6.2: write `e2e/backup-video.js` (standalone, `npm run video`): Playwright recordVideo 1366×768 of /stage auto-play (steps 0–8, ~100 s) → docs/backup-demo.webm, convert to .mp4 with ffmpeg if present, check < 25 MB.
+3. P7.x docs: DEMO_GUIDE.md, DEMO_CHEATSHEET.md, VIVA_QA.md, ARCHITECTURE.md, REPORT_DRAFT.md, final README, start-demo.bat/.command/.sh. EXPLAINED.md is written (tick P7.2 after a re-read).
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -24,11 +26,11 @@ P5.2 verification + P6.1: write `e2e/autopilot.spec.js` — for 1366×768 and 19
 - [x] P4.3 MITM (verified: e2e MITM toggle → mitmActive, Eve view 'EVE HAS THE KEY', Bob still accepts GCM frames, safety numbers differ; toggle off → numbers match)
 - [x] P4.4 Integration tests for active attacks (verified: test/server.test.js — bit-flip, replay, MITM, watcher throttling + keystream over network, non-localhost control refused, Alice replacement, every step patch; `npm test` 45 pass)
 - [x] P5.1 /stage layout (verified: Playwright screenshots at 1366×768 and 1920×1080 — scrollWidth/Height equal viewport (no scrolling); steps 2, 3, 4, 7 inspected: ECB silhouette, keystream recovery, star on Bob, MITM + ✗ MISMATCH)
-- [ ] P5.2 steps.js, sidebar, shortcuts, R/A/F, help overlay
-- [ ] P6.1 Full e2e autopilot + screenshots at both resolutions, reviewed
+- [x] P5.2 steps.js, sidebar, shortcuts, R/A/F, help overlay (verified: e2e/autopilot.spec.js presses R, 0–8, →, ←, F, ?, Escape, A (start/stop) and asserts the result; clean-<w>.png and help-<w>.png screenshots)
+- [x] P6.1 Full e2e autopilot + screenshots at both resolutions, reviewed (verified: e2e/autopilot.spec.js 5/5 passed — every step's `expect` asserted at 1366×768 and 1920×1080, no scrolling, no console errors; Bob 10.0 fps average with 3 panels (docs/results/e2e-fps.json); fake-camera pass; all 18 step screenshots reviewed — fixed splash-frame screenshots, overlay covering Alice, Bob keeping a stale stamped frame, unreadable overlay badges)
 - [ ] P6.2 Backup demo video
 - [x] P6.3 npm run bench + docs/results (verified: `npm run bench` → docs/results/bench.csv + RESULTS.md; ECB leak 89.6 %, others 0 %; ctr-hmac/gcm reject 100 % of bit-flipped and replayed frames, others 0 %; MITM 100/100 accepted, safety MISMATCH; slowest mode 0.79 ms/frame)
-- [ ] P6.4 /selftest
+- [x] P6.4 /selftest (verified: e2e/selftest.spec.js — 13/13 known-answer tests PASS in Chromium: FIPS-197 via aes-js and Web Crypto, ECB/CBC/CTR/GCM/HMAC/HKDF vs OpenSSL vectors, GCM tamper rejection, ECDH, safety number, splash byte-identical, all modes round-trip; screenshot docs/screenshots/selftest.png)
 - [ ] P6.5 10-minute soak + no-external-URL test
 - [ ] P7.1 DEMO_GUIDE.md + DEMO_CHEATSHEET.md
 - [ ] P7.2 EXPLAINED.md

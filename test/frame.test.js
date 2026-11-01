@@ -2,6 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import fs from 'node:fs';
 import { bytesEqual } from './helpers.js';
 import {
   W, H, FRAME_BYTES, BLOCKS, toTiles, fromTiles, posterizeValue, levelValue, createPipeline,
@@ -81,7 +82,8 @@ test('splash frame is deterministic (same bytes every time, known hash)', () => 
   a[0] ^= 1; // mutating a copy must not change the cache
   assert.ok(bytesEqual(makeSplashFrame(), b));
   const h = crypto.createHash('sha256').update(b).digest('hex');
-  assert.match(h, /^[0-9a-f]{64}$/);
+  const V = JSON.parse(fs.readFileSync(new URL('./vectors.json', import.meta.url)));
+  assert.equal(h, V.splash.sha256, 'splash matches the recorded hash in test/vectors.json');
 });
 
 test('synthetic scene is deterministic and the person can leave the room', () => {

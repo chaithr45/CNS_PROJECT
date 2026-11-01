@@ -34,5 +34,8 @@
     "sid": "test-session",
     "info": "CipherCam v1 keys",
     "okm": "935278182df72f810289c1ccff9b86358aabff949184275e2157a1dbcd14180ccc4bcb4bc78fd030f99b2fcc4e47a951b9b60498"
+  },
+  "splash": {
+    "sha256": "fe2923517dfdaee56e1a3586a282857b3e5a03fd0e4a56ae3b6437b01e86e943"
   }
 }

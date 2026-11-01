@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — Self-test</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/vendor/aes-js/index.js"></script>
+  <style>
+    table { width: 100%; border-collapse: collapse; }
+    td, th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    td.res { font-weight: 800; white-space: nowrap; }
+    td.res.pass { color: var(--ok); }
+    td.res.fail { color: var(--bad); }
+    #summary { font-size: 26px; font-weight: 800; }
+  </style>
+</head>
+<body>
+  <header class="topbar"><h1>✅ Self-test — known-answer tests in this browser</h1><span class="spacer"></span><a href="/">Home</a></header>
+  <main class="page single stack">
+    <div class="card stack">
+      <div id="summary">Running…</div>
+      <div class="muted">Each primitive is checked against fixed answers computed with an independent implementation
+        (Node.js / OpenSSL, file <code>test/vectors.json</code>) and the official FIPS-197 AES example. If everything says
+        PASS, this browser's Web Crypto and the aes-js library compute exactly what the standards say.</div>
+    </div>
+    <div class="card"><table><thead><tr><th>Result</th><th>Primitive</th><th>Details</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </main>
+  <script type="module" src="/js/selftest.js"></script>
+</body>
+</html>

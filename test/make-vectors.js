@@ -6,6 +6,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { makeSplashFrame } from '../shared/frame.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const hex = (b) => Buffer.from(b).toString('hex');
@@ -47,6 +48,8 @@ const vectors = {
   gcm: { ciphertextAndTag: hex(enc('aes-128-gcm', iv12, { aad, authTagLength: 16 })) },
   hmac: { tag: hex(crypto.createHmac('sha256', macKey).update(plaintext).digest()) },
   hkdf: { ikm: hex(ikm), sid, info: 'CipherCam v1 keys', okm: hex(okm) },
+  // The splash card must be byte-identical everywhere (Eve rebuilds it for keystream recovery).
+  splash: { sha256: crypto.createHash('sha256').update(makeSplashFrame()).digest('hex') },
 };
 
 // Sanity check: OpenSSL must reproduce the FIPS-197 vector.
