@@ -2,12 +2,12 @@
 Last updated: 2026-11-01 — session 1: scaffold
 
 ## Status
-P0–P6.1, P6.3, P6.4 done. Remaining: P6.2 backup video, P6.5 soak (script e2e/soak.js written, not yet run), P7 docs (EXPLAINED.md drafted), P7.7 acceptance.
+Everything except P6.2 (backup video), P6.5 (soak running), P7.6 tick (README + start scripts written, start-demo.sh tested) and P7.7 (acceptance) is done.
 
 ## NEXT STEP
-1. P6.5: run `npm run soak` (10 min, writes docs/results/soak.json + SOAK.md) and `node test/run-all.js no-external` (already passing); tick.
-2. P6.2: write `e2e/backup-video.js` (standalone, `npm run video`): Playwright recordVideo 1366×768 of /stage auto-play (steps 0–8, ~100 s) → docs/backup-demo.webm, convert to .mp4 with ffmpeg if present, check < 25 MB.
-3. P7.x docs: DEMO_GUIDE.md, DEMO_CHEATSHEET.md, VIVA_QA.md, ARCHITECTURE.md, REPORT_DRAFT.md, final README, start-demo.bat/.command/.sh. EXPLAINED.md is written (tick P7.2 after a re-read).
+1. When the soak finishes (`e2e/.tmp/soak.log`, results in docs/results/SOAK.md + soak.json): tick P6.5, add the soak numbers to docs/REPORT_DRAFT.md §6.2.
+2. P6.2: run `npm run video` (e2e/backup-video.js) → docs/backup-demo.webm + .mp4; check sizes < 25 MB; look at a few frames (ffmpeg -ss … -frames:v 1).
+3. Tick P7.6. Then P7.7: clean clone into a temp dir (`git clone` this branch), `npm ci`, `npm test`, `npm run e2e`, `npm run bench`, `npm start` + curl every page; paste outputs into PROGRESS.md; write the Final summary.
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -32,11 +32,11 @@ P0–P6.1, P6.3, P6.4 done. Remaining: P6.2 backup video, P6.5 soak (script e2e/
 - [x] P6.3 npm run bench + docs/results (verified: `npm run bench` → docs/results/bench.csv + RESULTS.md; ECB leak 89.6 %, others 0 %; ctr-hmac/gcm reject 100 % of bit-flipped and replayed frames, others 0 %; MITM 100/100 accepted, safety MISMATCH; slowest mode 0.79 ms/frame)
 - [x] P6.4 /selftest (verified: e2e/selftest.spec.js — 13/13 known-answer tests PASS in Chromium: FIPS-197 via aes-js and Web Crypto, ECB/CBC/CTR/GCM/HMAC/HKDF vs OpenSSL vectors, GCM tamper rejection, ECDH, safety number, splash byte-identical, all modes round-trip; screenshot docs/screenshots/selftest.png)
 - [ ] P6.5 10-minute soak + no-external-URL test
-- [ ] P7.1 DEMO_GUIDE.md + DEMO_CHEATSHEET.md
-- [ ] P7.2 EXPLAINED.md
-- [ ] P7.3 VIVA_QA.md
-- [ ] P7.4 ARCHITECTURE.md
-- [ ] P7.5 REPORT_DRAFT.md
+- [x] P7.1 DEMO_GUIDE.md + DEMO_CHEATSHEET.md (verified: every step 0–8 has Press / Say / audience sees (embedded screenshot) / If it doesn't work; setup A+B, three checklists, timing, recovery playbook, pitch, camera tuning; link checker: all relative links/images exist)
+- [x] P7.2 EXPLAINED.md (verified: all 14 concepts + posterize/tiling + what each attack proves; every file→function pointer exists in the code)
+- [x] P7.3 VIVA_QA.md (verified: 43 Q&As incl. all 9 example questions from the spec)
+- [x] P7.4 ARCHITECTURE.md (verified: components, wire format table, normal + MITM handshake and frame-flow sequence diagrams (Mermaid), state model + replay state diagram)
+- [x] P7.5 REPORT_DRAFT.md (verified: all required sections; numbers copied from docs/results/RESULTS.md and e2e-fps.json; references FIPS-197, SP 800-38A/D, RFC 2104/5869, Stallings)
 - [ ] P7.6 Final README + start scripts
 - [ ] P7.7 Final acceptance run from clean clone
 - [ ] P8.1 (optional) Solo mode static build
