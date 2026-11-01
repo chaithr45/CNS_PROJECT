@@ -27,7 +27,7 @@ P5.2 verification + P6.1: write `e2e/autopilot.spec.js` — for 1366×768 and 19
 - [ ] P5.2 steps.js, sidebar, shortcuts, R/A/F, help overlay
 - [ ] P6.1 Full e2e autopilot + screenshots at both resolutions, reviewed
 - [ ] P6.2 Backup demo video
-- [ ] P6.3 npm run bench + docs/results
+- [x] P6.3 npm run bench + docs/results (verified: `npm run bench` → docs/results/bench.csv + RESULTS.md; ECB leak 89.6 %, others 0 %; ctr-hmac/gcm reject 100 % of bit-flipped and replayed frames, others 0 %; MITM 100/100 accepted, safety MISMATCH; slowest mode 0.79 ms/frame)
 - [ ] P6.4 /selftest
 - [ ] P6.5 10-minute soak + no-external-URL test
 - [ ] P7.1 DEMO_GUIDE.md + DEMO_CHEATSHEET.md

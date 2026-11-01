@@ -26,7 +26,8 @@ body.stage { overflow: hidden; font-size: 18px; }
 .st-overlay {
   position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); z-index: 5;
   background: rgba(0, 0, 0, .86); border: 3px solid var(--warn); color: #fff;
-  padding: 14px 28px; border-radius: 14px; font-size: clamp(24px, 3vw, 44px); font-weight: 800; text-align: center; max-width: 90%;
+  padding: 12px 18px; border-radius: 14px; font-size: clamp(22px, 2.2vw, 40px); font-weight: 800; text-align: center;
+  width: max-content; max-width: 32%; line-height: 1.2;
   pointer-events: none;
 }
 
