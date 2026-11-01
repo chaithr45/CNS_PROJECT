@@ -28,7 +28,7 @@ Everything except P6.2 (backup video), P6.5 (soak running), P7.6 tick (README + 
 - [x] P5.1 /stage layout (verified: Playwright screenshots at 1366×768 and 1920×1080 — scrollWidth/Height equal viewport (no scrolling); steps 2, 3, 4, 7 inspected: ECB silhouette, keystream recovery, star on Bob, MITM + ✗ MISMATCH)
 - [x] P5.2 steps.js, sidebar, shortcuts, R/A/F, help overlay (verified: e2e/autopilot.spec.js presses R, 0–8, →, ←, F, ?, Escape, A (start/stop) and asserts the result; clean-<w>.png and help-<w>.png screenshots)
 - [x] P6.1 Full e2e autopilot + screenshots at both resolutions, reviewed (verified: e2e/autopilot.spec.js 5/5 passed — every step's `expect` asserted at 1366×768 and 1920×1080, no scrolling, no console errors; Bob 10.0 fps average with 3 panels (docs/results/e2e-fps.json); fake-camera pass; all 18 step screenshots reviewed — fixed splash-frame screenshots, overlay covering Alice, Bob keeping a stale stamped frame, unreadable overlay badges)
-- [ ] P6.2 Backup demo video
+- [x] P6.2 Backup demo video (verified: `npm run video` → docs/backup-demo.webm 17.6 MB + docs/backup-demo.mp4 15.8 MB (ffmpeg), 107 s, both < 25 MB; frames at 25/50/75/92 s inspected: ECB, CCTV loop, GCM rejections, MITM mismatch with captions)
 - [x] P6.3 npm run bench + docs/results (verified: `npm run bench` → docs/results/bench.csv + RESULTS.md; ECB leak 89.6 %, others 0 %; ctr-hmac/gcm reject 100 % of bit-flipped and replayed frames, others 0 %; MITM 100/100 accepted, safety MISMATCH; slowest mode 0.79 ms/frame)
 - [x] P6.4 /selftest (verified: e2e/selftest.spec.js — 13/13 known-answer tests PASS in Chromium: FIPS-197 via aes-js and Web Crypto, ECB/CBC/CTR/GCM/HMAC/HKDF vs OpenSSL vectors, GCM tamper rejection, ECDH, safety number, splash byte-identical, all modes round-trip; screenshot docs/screenshots/selftest.png)
 - [x] P6.5 10-minute soak + no-external-URL test (verified: `npm run soak` → PASS: 0 console errors in 10 min of looping auto-play, min 220 Bob frames / 30 s, browser heap 6.0→5.5 MB, server heap 43.7→44.1 MB (docs/results/SOAK.md); test/no-external-urls.test.js 3/3 pass)
@@ -37,7 +37,7 @@ Everything except P6.2 (backup video), P6.5 (soak running), P7.6 tick (README + 
 - [x] P7.3 VIVA_QA.md (verified: 43 Q&As incl. all 9 example questions from the spec)
 - [x] P7.4 ARCHITECTURE.md (verified: components, wire format table, normal + MITM handshake and frame-flow sequence diagrams (Mermaid), state model + replay state diagram)
 - [x] P7.5 REPORT_DRAFT.md (verified: all required sections; numbers copied from docs/results/RESULTS.md and e2e-fps.json; references FIPS-197, SP 800-38A/D, RFC 2104/5869, Stallings)
-- [ ] P7.6 Final README + start scripts
+- [x] P7.6 Final README + start scripts (verified: README has screenshot, Windows/macOS quick start, commands, pages, docs, folder map; start-demo.bat (CRLF, Node check, npm install if needed, npm run demo), start-demo.command/.sh executable (git mode 100755); ./start-demo.sh started the server and printed the banner; link check passes)
 - [ ] P7.7 Final acceptance run from clean clone
 - [ ] P8.1 (optional) Solo mode static build
 
