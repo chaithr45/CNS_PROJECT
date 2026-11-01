@@ -48,6 +48,14 @@ npm test
 ```
 
 ## Decision log
+- 2026-11-01 Replay has a 4th phase `ready` (recording finished, not yet looping) besides off/recording/looping — makes the Eve panel and the Stage log clearer; Stop after looping returns to `ready` so the same recording can be looped again.
+- 2026-11-01 Stage digit keys: `0`–`8` jump to steps 0–8 (the steps are numbered from 0); `9` goes to the last step.
+- 2026-11-01 Every demo step sends `restart: true`, so any step is reachable from any other with a fresh session and no leftover state. MITM toggle also restarts automatically (so "takes effect on restart" happens immediately).
+- 2026-11-01 Non-localhost clients may only connect as `watch` (close 4003 otherwise) — stricter than "no control messages", so a phone can't impersonate Alice/Bob either. A test-only header `x-ciphercam-simulate-remote` can only REMOVE rights, so it is safe to honour always.
+- 2026-11-01 Bob clears his screen and per-session counters at every new session (the totals are kept in the debug hook) — otherwise a stamped frame from the previous step stayed frozen on screen in GCM, which looked like GCM had failed.
+- 2026-11-01 The Stage's Bob alert area and debug hook read the same-origin iframes' `window.__ciphercam`; safety numbers reach the Stage only through the out-of-band BroadcastChannel.
+- 2026-11-01 Backup video and soak test are separate scripts (`npm run video`, `npm run soak`) rather than part of `npm run e2e`, so `npm run e2e` stays ~4 minutes.
+- 2026-11-01 Eve's passive views and /watch get Alice's ORIGINAL frames (before Eve's own bit-flip), which is what an eavesdropper on the wire sees.
 - 2026-11-01 Playwright launches Chromium with `--proxy-server=direct://` — the cloud container sets HTTPS_PROXY and Chromium otherwise sends ws:// to the LAN IP through that proxy (403). Irrelevant on the student's laptop, harmless there.
 - 2026-11-01 Stamp masks (star / HACKED / smiley) are drawn with pure maths in `shared/stamps.js` instead of canvas text — identical bytes in browser and Node, so the relay can build the mask itself and tests can check it. Eve's panel shows a preview canvas of the same mask.
 - 2026-11-01 `npm test` runs `test/run-all.js`, which passes the explicit file list to `node --test` (shell globs don't work in Windows cmd and Node 20 has no built-in glob).
