@@ -2,18 +2,17 @@
 Last updated: 2026-11-01 — session 1: scaffold
 
 ## Status
-Phase 1 in progress — shared/frame.js, ecb.js, crypto.js, protocol.js, sender.js, receiver.js written and smoke-checked by hand (all 7 modes round-trip, ECB leak 88 %). Formal unit tests (P1.4) not written yet.
+Phase 1 done (shared core + 36 passing tests). Phase 2 (server + Alice/Bob pages) next.
 
 ## NEXT STEP
-1. Visually check the synthetic scene + splash (render to PNG) and tick P1.1–P1.3.
-2. P1.4: write `test/frame.test.js`, `test/crypto.test.js`, `test/attacks.test.js`, `test/make-vectors.js` → `test/vectors.json`. Run `npm test` until green.
+P2.1: write `server/index.js` (CLI flags --port --no-open --allow-remote-control), `server/app.js` (createServer(opts) → {start, stop, port, state}; static serving of public/, /shared, /vendor/aes-js, /vendor/qrcode; WebSocket relay at /ws?role=…; state + control patches; localhost-only rule; port fallback 8080-8090; banner + terminal QR; open browser). `server/eve-active.js` already exists (bit-flip, replay recorder, MITM) and is tested.
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
-- [ ] P1.1 shared/frame.js
-- [ ] P1.2 shared/crypto.js + shared/ecb.js
-- [ ] P1.3 shared/protocol.js, sender.js, receiver.js
-- [ ] P1.4 Unit tests for P1, `npm test` green
+- [x] P1.1 shared/frame.js (verified: test/frame.test.js 13 tests; rendered splash + synthetic scene + ECB block view to PNG and inspected — silhouette clearly visible)
+- [x] P1.2 shared/crypto.js + shared/ecb.js (verified: test/crypto.test.js — FIPS-197 C.1, ECB/CBC/CTR/GCM/HMAC/HKDF/ECDH identical to node:crypto/OpenSSL)
+- [x] P1.3 shared/protocol.js, sender.js, receiver.js (verified: all 7 modes round-trip through the wire format)
+- [x] P1.4 Unit tests for P1, `npm test` green (verified: `npm test` → 36 pass, 0 fail; includes attack-property tests using server/eve-active.js)
 - [ ] P2.1 server (static, relay, state, localhost rule, port fallback, banner+QR, open browser)
 - [ ] P2.2 /alice
 - [ ] P2.3 /bob
@@ -47,6 +46,9 @@ npm test
 ```
 
 ## Decision log
+- 2026-11-01 Stamp masks (star / HACKED / smiley) are drawn with pure maths in `shared/stamps.js` instead of canvas text — identical bytes in browser and Node, so the relay can build the mask itself and tests can check it. Eve's panel shows a preview canvas of the same mask.
+- 2026-11-01 `npm test` runs `test/run-all.js`, which passes the explicit file list to `node --test` (shell globs don't work in Windows cmd and Node 20 has no built-in glob).
+- 2026-11-01 Receiver rebuilds the GCM nonce from its own nonceSalt + seq instead of trusting the header IV (header IV is still sent, for Eve's nonce-reuse detector).
 - 2026-11-01 Pinned `@playwright/test` to 1.63.0 (not latest 1.64.1) — it matches the Chromium build pre-installed in the cloud container; on the student's laptop Playwright is only needed for e2e, not for the demo.
 - 2026-11-01 Pinned exact versions: ws 8.22.1, aes-js 3.1.2, qrcode 1.5.4.
 
@@ -54,4 +56,4 @@ npm test
 - None yet.
 
 ## Session log (newest first)
-- 2026-11-01 Session 1: P0.1 scaffold; shared core files written (P1.1–P1.3 code, unverified by tests). Next: P1.4 tests.
+- 2026-11-01 Session 1: P0.1 scaffold; P1 shared core + tests (36 green). Next: P2.1 server.
