@@ -62,11 +62,11 @@ Phones can never control anything. Only the laptop can.
 
 ### The night before
 
-- [ ] `git pull` (or download the latest ZIP), then double-click `start-demo.bat` once.
+- [ ] Download the latest ZIP of the branch `claude/keen-gates-2y13h1` (see [HOW_TO_TEST.md §2](HOW_TO_TEST.md#2-download-ciphercam-once)), extract it, then double-click `start-demo.bat` once.
 - [ ] Open a terminal in the folder and run `npm test`. It should end with `# fail 0`.
 - [ ] On the Stage, press **A** (auto-play) and watch the whole demo once (~2 minutes). Press **A** again to stop.
 - [ ] Rehearse once **by hand** with the arrow keys, saying the "Say" lines below out loud.
-- [ ] Try your **webcam** (Alice panel → open `http://localhost:8080/alice` → Video source: Webcam) and tune it (section 7).
+- [ ] Try your **webcam**: in the Stage's side menu choose **📷 Video → Webcam**, allow the camera, and tune it (section 7). Switch back with **📷 Video → Synthetic**.
 - [ ] Copy `docs/backup-demo.mp4` (or `.webm`) to the desktop. Check it plays.
 - [ ] Charge the laptop.
 
@@ -146,7 +146,7 @@ Each step changes everything at once (mode, attacks, Eve's view) and starts a fr
 
 ![Step 2](screenshots/step-2-1366.png)
 
-**If it doesn't work:** with a webcam, if the outline is messy: open `/alice` in another tab, set **Grey levels** to 3, move closer to a plain wall. Or switch the source to **Synthetic scene** (section 8).
+**If it doesn't work:** with a webcam, if the outline is messy: in the Stage's side menu set **Grey levels** to 3 and move closer to a plain wall. Or switch **📷 Video → Synthetic** (section 8).
 
 ### Step 3 — Nonce reuse — 60 s
 
@@ -253,20 +253,20 @@ Short on time? Skip step 0 and shorten step 1 to one sentence: you land at about
 
 ## 7. Camera tuning (do this the night before)
 
-Open `http://localhost:8080/alice` in a second tab and choose **Video source: Webcam**.
+Everything is done **on the Stage** (no other tab): in the side menu choose **📷 Video → Webcam** and allow the camera when the browser asks. Press **2** (ECB) to judge the result in Eve's panel.
 
 - **Distance:** 1–1.5 m from the camera. Head and shoulders in the picture, like a passport photo.
 - **Background:** a **plain, light wall**. Posters, shelves and windows add "noise" blocks.
 - **Light:** in front of you (a window or lamp facing you), never behind you.
 - **Clothes:** a **dark, plain shirt**. Your body becomes one big dark area of identical blocks.
-- **Grey levels slider** (default 4):
+- **Grey levels** (Stage side menu, default 4):
   - ECB picture looks like confetti → lower it to **3**.
   - You disappear into the wall → raise it to **5**.
-- **Flicker margin** (default 6): if edges of your body flicker, raise it to **8–10**.
+- **Flicker margin** (advanced, default 6; rarely needed): if the edges of your body flicker a lot, it can be raised to **8–10** on Alice's own page. Do this only the night before: open `http://localhost:8080/alice` in a new tab, move the **Flicker margin** slider, close that tab, then on the Stage click the message in Alice's panel ("…Click here to use this one again") or press **F5**. The setting is kept.
 
 **What a good ECB leak looks like** (step 2): in Eve's panel the wall is one or two big flat colours, your body is another flat colour, and only the edges look like coloured confetti. The leak meter is above ~60%. If you can recognise your outline from the back of the room, it's good.
 
-If the webcam doesn't cooperate on the day, use the **Synthetic scene**: it is designed to show every attack perfectly.
+If the webcam doesn't cooperate on the day, use **📷 Video → Synthetic** (the cartoon person): it is designed to show every attack perfectly.
 
 ---
 
@@ -274,7 +274,7 @@ If the webcam doesn't cooperate on the day, use the **Synthetic scene**: it is d
 
 1. **Something looks stuck:** press **R**. Everything resets and gets fresh keys. Then press the step number.
 2. **One panel is black or frozen:** right-click inside that panel → **Reload frame**. The session restarts by itself.
-3. **Webcam fails / looks bad:** the Alice panel switches to the synthetic scene automatically if the camera fails. To switch by hand, open `http://localhost:8080/alice` → Video source → **Synthetic scene**.
+3. **Webcam fails / looks bad:** the Alice panel switches to the synthetic video automatically if the camera fails. To switch by hand: Stage side menu → **📷 Video → Synthetic**, then press **R**.
 4. **Everything is frozen:** click the black server window, press **Ctrl + C**, then double-click `start-demo.bat` again. Reload the Stage (F5).
 5. **Laptop or projector trouble:** play **`docs/backup-demo.mp4`** (or `.webm`) and narrate over it using the same "Say" lines. It shows the whole demo with captions.
 
@@ -288,7 +288,8 @@ If the webcam doesn't cooperate on the day, use the **Synthetic scene**: it is d
 
 ## 10. If you have extra time / questions
 
-- Open **`/eve`** to show the other views: **XOR with previous frame** (in step 3 it shows only the moving parts) and **Raw ciphertext**.
-- Open **`/bob`** to show the counters and the **Download stats CSV** button.
+- Open **`/eve`** in a new window (it does not disturb the Stage) to show the other views: **XOR with previous frame** (in step 3 it shows only the moving parts) and **Raw ciphertext**.
+- Bob's counters are already on the Stage under **📺 Bob's checks**. (Bob's own page `/bob` has a **Download stats CSV** button, but opening it takes over the Stage's Bob panel — do it after the demo.)
 - Open **`/selftest`** to prove the AES implementation matches the official FIPS-197 test vector.
+- Mention that `npm test` re-checks all five attacks with a completely separate OpenSSL implementation (`test/independent.test.js`): the bytes on the wire are identical to what OpenSSL produces.
 - See [`VIVA_QA.md`](VIVA_QA.md) for 30+ likely examiner questions and [`EXPLAINED.md`](EXPLAINED.md) for every concept in plain English.

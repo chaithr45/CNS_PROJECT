@@ -121,6 +121,8 @@ async function startSession(s) {
   session.kp = kp;
   sendHello();
   setStatus(s.mode === 'plain' ? 'Sending WITHOUT encryption' : 'Sent my public key — waiting for Bob…');
+  // Bob's key may have arrived while ours was still being made: use it now.
+  if (session.earlyHello) onHello(session.earlyHello).catch((e) => setStatus(`Key exchange failed: ${e.message}`, 'bad'));
 }
 
 function sendHello() {
@@ -128,7 +130,10 @@ function sendHello() {
 }
 
 async function onHello(h) {
-  if (!session || h.sid !== session.sid || !session.kp) return;
+  if (!session || h.sid !== session.sid) return;
+  // Bob was faster than our own key generation: keep his key until ours is ready
+  // (dropping it would leave this session stuck with no key on Alice's side).
+  if (!session.kp) { session.earlyHello = h; return; }
   const my = gen;
   const peer = fromBase64(h.pub);
   // ECDH + HKDF: combine my private key with Bob's public key → the session keys.

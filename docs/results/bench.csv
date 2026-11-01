@@ -1,8 +1,8 @@
 mode,label,enc_ms_per_frame,dec_ms_per_frame,enc_MBps,dec_MBps,overhead_bytes,leak_percent,bitflip_reject_percent,replay_reject_percent
-"plain","No encryption",0.048,0.044,399.503,440.549,0,89.558,0,0
-"ecb","AES-ECB",0.730,0.748,26.291,25.653,0,89.558,0,0
-"cbc","AES-CBC (random IV)",0.203,0.190,94.625,101.167,32,0,0,0
-"ctr","AES-CTR (random nonce)",0.190,0.188,100.918,102.119,16,0,0,0
-"ctr-reuse","AES-CTR — BUG: nonce reused",0.094,0.112,204.302,171.248,16,0,0,0
-"ctr-hmac","CTR + HMAC (Encrypt-then-MAC)",0.199,0.189,96.714,101.846,48,0,100,100
-"gcm","AES-GCM (secure)",0.101,0.110,190.998,175.014,28,0,100,100
+"plain","No encryption",0.059,0.079,323.894,242.998,0,89.558,0,0
+"ecb","AES-ECB",0.973,0.850,19.726,22.579,0,89.558,0,0
+"cbc","AES-CBC (random IV)",0.207,0.168,92.902,114.413,32,0,0,0
+"ctr","AES-CTR (random nonce)",0.148,0.146,129.967,131.837,16,0,0,0
+"ctr-reuse","AES-CTR — BUG: nonce reused",0.119,0.142,161.803,135.091,16,0,0,0
+"ctr-hmac","CTR + HMAC (Encrypt-then-MAC)",0.350,0.264,54.833,72.684,48,0,100,100
+"gcm","AES-GCM (secure)",0.143,0.153,134.710,125.612,28,0,100,100

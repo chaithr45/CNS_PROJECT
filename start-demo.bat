@@ -4,7 +4,9 @@ cd /d "%~dp0"
 title CipherCam server - keep this window open
 where node >nul 2>nul
 if errorlevel 1 goto nonode
-if exist node_modules goto run
+rem Skip the install only if all three runtime packages are really there
+rem (a half-finished first install, e.g. after a Wi-Fi drop, is repaired automatically).
+if exist "node_modules\ws\package.json" if exist "node_modules\aes-js\package.json" if exist "node_modules\qrcode\package.json" goto run
 echo.
 echo   First start: installing CipherCam. This needs internet once, about 1 minute...
 echo.

@@ -21,11 +21,11 @@ Take it slowly and tick the boxes in the [checklist at the end](#13-my-test-chec
 2. [Download CipherCam (once)](#2-download-ciphercam-once)
 3. [Start the application](#3-start-the-application)
 4. [Which browser tabs to open](#4-which-browser-tabs-to-open)
-5. [A tour of the Stage screen](#5-a-tour-of-the-stage-screen)
+5. [A tour of the Stage screen](#5-a-tour-of-the-stage-screen) (and [how to reset](#how-to-reset-the-demonstration))
 6. [The fastest full test: auto-play](#6-the-fastest-full-test-auto-play)
 7. [Test the five attacks, one by one](#7-test-the-five-attacks-one-by-one)
 8. [How to turn on secure mode](#8-how-to-turn-on-secure-mode)
-9. [Test with your webcam](#9-test-with-your-webcam)
+9. [Test with your webcam](#9-test-with-your-webcam) (and [what to do if it fails](#if-the-webcam-fails-use-the-synthetic-video))
 10. [What each separate page should look like](#10-what-each-separate-page-should-look-like)
 11. [Optional: phones and automatic tests](#11-optional-phones-and-automatic-tests)
 12. [Troubleshooting](#12-troubleshooting)
@@ -56,12 +56,12 @@ Node.js is a free program that runs the CipherCam server. You install it once.
 
 1. 👉 Open **Chrome** or **Edge**. Click the **address bar**, type `nodejs.org` and press **Enter**.
 2. 👉 Click the big button that says **LTS** (for example "Download Node.js (LTS)").
-   ✅ A file such as `node-v22.x.x-x64.msi` downloads.
+   ✅ A file such as `node-v24.x.x-x64.msi` downloads (the version number may be different — any LTS version from 20 upwards works).
 3. 👉 Open the downloaded file (click it in the browser's download list, or double-click it in your **Downloads** folder).
 4. 👉 In the installer click **Next**, tick **I accept the terms**, then **Next**, **Next**, **Next**, **Install**. If Windows asks "Do you want to allow this app to make changes to your device?", click **Yes**. At the end click **Finish**.
    - If another window offers to install "Tools for Native Modules", you can close it. It is not needed.
 5. 👉 **Check it worked.** Press the **Windows key** on the keyboard, type `cmd`, press **Enter**. A black window called **Command Prompt** opens. Type `node -v` and press **Enter**.
-   ✅ You see a version number such as `v22.11.0`.
+   ✅ You see a version number such as `v24.11.0` (any number from `v20` upwards is fine).
    ❌ "'node' is not recognized…": restart the laptop and try step 5 again. Still not working? Install again (step 2).
 6. 👉 Close the Command Prompt window.
 
@@ -71,11 +71,23 @@ Node.js is a free program that runs the CipherCam server. You install it once.
 
 ## 2. Download CipherCam (once)
 
+**Easiest:** sign in to GitHub in your browser, then paste this address into the address bar and press **Enter**. The ZIP downloads straight away:
+
+```
+https://github.com/chaithr45/CNS_PROJECT/archive/refs/heads/claude/keen-gates-2y13h1.zip
+```
+
+**Or by clicking:**
+
 1. 👉 In the browser go to `github.com/chaithr45/CNS_PROJECT`.
-2. 👉 Just above the list of files there is a button showing a **branch name** (for example `main`). Click it and choose **`claude/kind-heisenberg-u8tdul`**, if it is in the list. (After this branch has been merged into `main`, `main` is fine.)
+2. 👉 Just above the list of files there is a button showing a **branch name** (for example `main`). Click it and choose **`claude/keen-gates-2y13h1`** (the branch with the finished project). If you have since merged it into `main`, `main` is fine.
    ✅ You see files such as `start-demo.bat`, `README.md` and folders `docs`, `public`, `server`, `shared`.
 3. 👉 Click the green **`<> Code`** button, then **Download ZIP**.
-4. 👉 Open your **Downloads** folder. **Right-click** the ZIP file → **Extract All…** → **Extract**.
+
+**Then, for both ways:**
+
+4. 👉 Open your **Downloads** folder. **Right-click** the ZIP file (named like `CNS_PROJECT-claude-keen-gates-2y13h1.zip`) → **Extract All…** → **Extract**.
+   ❌ Don't double-click files *inside* the ZIP without extracting first — Windows then runs them from a temporary folder and the installation fails.
 5. 👉 Move the extracted folder to your **Desktop** (drag it there). Open it.
    ✅ You can see the file **`start-demo.bat`**.
    ❌ You only see one folder: open that folder; the files are inside it.
@@ -141,13 +153,11 @@ The Stage already contains the three people. You can test everything from it: th
 
 Why two **windows** and not two tabs? A tab you can't see is put to sleep by the browser, and then the video would almost stop. Two windows next to each other both keep running.
 
-### ⚠ Don't open `/alice` or `/bob` while the Stage is open
+### You never need to open `/alice` or `/bob` separately
 
-A call has **one** Alice and **one** Bob. If you open `localhost:8080/alice` or `localhost:8080/bob` in another tab, that new page **takes over**, and the Stage's panel shows:
+The Stage **already contains Alice and Bob** and controls them: the encryption mode, the video source (cartoon person or webcam) and the grey levels are all in the Stage's side menu. So for the demo and for every test in this guide, **don't open `/alice` or `/bob`**.
 
-> ⚠ Another Alice page took over. Click here to use this one again.
-
-That is not a bug. Close the extra tab and **click that message** (or press **F5** on the Stage). Section 10 shows how to look at those pages safely.
+(If you do open one of them by accident: a call has only **one** Alice and **one** Bob, so the new page **takes over** and the Stage's panel shows "⚠ Another Alice page took over. Click here to use this one again." That is not a bug. Close the extra tab and **click that message**, or press **F5** on the Stage.)
 
 ### All the addresses
 
@@ -156,10 +166,10 @@ That is not a bug. Close the extra tab and **click that message** (or press **F5
 | `localhost:8080/stage` | **The Stage** (the main page) |
 | `localhost:8080/eve` | Eve's control panel: her views and the attack buttons |
 | `localhost:8080/` | The start page with links to everything |
-| `localhost:8080/alice` | Alice's page on its own (sender settings) |
-| `localhost:8080/bob` | Bob's page on its own (counters, CSV download) |
 | `localhost:8080/selftest` | An automatic check that the encryption is correct |
 | `localhost:8080/watch` | The read-only view for audience phones |
+| `localhost:8080/solo` | Optional "solo mode": the whole demo in one page, without the relay (see section 11) |
+| `localhost:8080/alice`, `localhost:8080/bob` | Alice's and Bob's pages on their own. **Not needed** — the Stage has them (see above and section 10) |
 
 ---
 
@@ -183,7 +193,7 @@ That is not a bug. Close the extra tab and **click that message** (or press **F5
 | **📜 Event log** (bottom right) | What just happened (new keys, attacks, rejections) | Lines like "Alice sent her ECDH public key" |
 | **Caption bar** (yellow border, very bottom) | The step's title, one sentence to say, and the formula | "Step 1 · Encrypted call" |
 | **Demo steps** (right side) | Steps 0–8 (click one to jump to it), **◀ Prev / Next ▶**, **⟳ Reset**, **▶ Auto**, **⛶ Clean** | Step 1 is yellow |
-| Under the steps | **🔒 Encryption mode** list, **📷 Video** list, **Grey levels** list, and a **QR code** for phones | Mode says "AES-CTR (random nonce)" |
+| Under the steps | **🔒 Encryption mode** list, **📷 Video** list (**Synthetic** = the cartoon person, or **Webcam**), **Grey levels** list, and a **QR code** for phones | Mode says "AES-CTR (random nonce)", Video says "Synthetic" |
 
 ❌ **Bob's panel stays black** for more than 3 seconds → click **⟳ Reset**.
 ❌ **The dot says "reconnecting…" in red** → the black window was closed. Double-click `start-demo.bat` again.
@@ -200,6 +210,19 @@ That is not a bug. Close the extra tab and **click that message** (or press **F5
 | **A** | Auto-play the whole demo (press **A** again to stop) |
 | **F** | Hide/show the side menu and top bar (clean projector view) |
 | **?** | Show the list of keys (**Esc** closes it) |
+
+### How to reset the demonstration
+
+Whenever something looks wrong, or before you start again from the beginning:
+
+1. 👉 Click once on the yellow caption bar (so the keys reach the Stage).
+2. 👉 Press **R** (or click **⟳ Reset** in the side menu).
+
+✅ Within 2 seconds: "Step 1 · Encrypted call", **all attacks are off**, a **new call with new keys** starts (new safety numbers, ✓ MATCH), Bob's counters start again from 0 and old red alerts disappear.
+
+Every step also starts its own fresh call, so you can jump to any step at any time (press its number) without resetting first.
+
+If **R** doesn't help: press **F5** (reload the Stage). If that doesn't help either: restart the black window (see [section 12](#12-troubleshooting), "Everything is frozen").
 
 ---
 
@@ -357,11 +380,10 @@ Then each attack shows **the fix** and how to check it.
 
 "Secure mode" means encryption **plus** tamper detection **plus** replay detection. CipherCam has two secure modes: **AES-GCM (secure)** (the main one) and **CTR + HMAC (Encrypt-then-MAC)**.
 
-**Three ways to turn it on (pick any one):**
+**Two ways to turn it on (pick either):**
 
 1. **Easiest:** on the Stage press **6** (or click **6 Secure mode**). The step even tries both attacks for you (see below).
-2. **On the Stage side menu:** open **🔒 Encryption mode** and choose **AES-GCM (secure)** (or **CTR + HMAC (Encrypt-then-MAC)**).
-3. **On Alice's own page** (`localhost:8080/alice`, see the warning in section 4): in the **Encryption mode** list choose **AES-GCM (secure)**.
+2. **By hand:** in the Stage's side menu open **🔒 Encryption mode** and choose **AES-GCM (secure)** (or **CTR + HMAC (Encrypt-then-MAC)**).
 
 ✅ **How you can tell secure mode is on:**
 - The top badge is **green** with a lock: **🔒 AES-GCM (secure)**.
@@ -394,17 +416,25 @@ The cartoon person is the safest choice for the classroom, but you should try yo
    ✅ In Eve's coloured blocks you can recognise **your head and shoulders**. The leak meter is above about 60%.
    ❌ It looks like confetti: set **Grey levels** (side menu) to **3**. You vanish into the wall: set it to **5**. A **dark shirt** helps a lot.
 5. 👉 Press **→** to go through steps 3–8. ✅ Everything works the same with your face.
-6. 👉 To go back to the cartoon person: **📷 Video → Synthetic scene**.
+6. 👉 To go back to the cartoon person: **📷 Video → Synthetic**.
+
+### If the webcam fails: use the synthetic video
+
+The **synthetic video** (the cartoon person in a grey room) is built into CipherCam. It needs no camera, always works, and shows every attack clearly. It is the default.
+
+- If the camera can't be opened, CipherCam **switches to the synthetic video by itself** and shows a message "Camera not available — switched to the synthetic scene".
+- To switch by hand at any time: Stage side menu → **📷 Video → Synthetic**. ✅ Within a second Alice's panel shows the cartoon person and the small badge says **◎ synthetic**.
+- Then press **R** and carry on. Nothing else changes.
 
 ---
 
 ## 10. What each separate page should look like
 
-You don't need these pages for the demo, but it is good to check them once. **Close the Stage tab first** (because of the "takes over" rule in section 4). Then open each address in a new tab.
+You don't need these pages for the demo — the Stage contains everything. This section is only an optional check. For `/alice` and `/bob`, **close the Stage tab first** (each of them "takes over" from the Stage's panel, see section 4). Then open each address in a new tab.
 
 ### Start page — `localhost:8080/`
 
-✅ A big **▶ Open Stage** button, six cards (Stage, Alice, Bob, Eve, Watch, Self-test) and a QR code for phones.
+✅ A big **▶ Open Stage** button, seven cards (Stage, Alice, Bob, Eve, Watch, Self-test, Solo mode) and a QR code for phones.
 
 ![Start page](screenshots/page-home.png)
 
@@ -412,6 +442,7 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 
 ✅ The video Alice sends, her safety number, and on the right: a status box ("🔒 Keys agreed — sending in …"), the **Encryption mode** and **Video source** lists, the **Person leaves the room** and **Keep waving** tick boxes, the **⟳ Restart session (new keys)** button, three sliders (**Grey levels**, **Frames per second**, **Flicker margin**), and **📷 Camera tuning tips**.
 - If no Bob page is open, the video says **"Waiting for Bob…"**. That is correct. Open `/bob` in **another window** next to it (section 4 explains side-by-side windows).
+- Only here: the **Frames per second** and **Flicker margin** sliders (the Stage doesn't need them; the defaults 10 and 6 are right).
 - 👉 Click **⟳ Restart session (new keys)** → ✅ the safety number changes to a new one.
 
 ![Alice page](screenshots/page-alice.png)
@@ -436,7 +467,7 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 
 ![Self-test](screenshots/selftest.png)
 
-👉 When you're done, close these tabs and open `localhost:8080/stage` again.
+👉 When you're done, close these tabs and open `localhost:8080/stage` again (or press **F5** on it).
 
 ---
 
@@ -453,11 +484,19 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 
 1. 👉 Open the CipherCam folder in File Explorer. Click the **address bar at the top of the folder window** (where the folder path is), type `cmd`, press **Enter**. A Command Prompt opens **already inside the CipherCam folder**.
 2. 👉 Type `npm test` and press **Enter**. Wait about 15 seconds.
-   ✅ Near the end: **`# pass 48`** and **`# fail 0`**.
+   ✅ Near the end: **`# pass 54`** and **`# fail 0`**. (Six of these tests check all five attacks again with a completely separate implementation of the cryptography — OpenSSL inside Node.js.)
 3. 👉 (Optional, needs internet the first time.) Type `npx playwright install chromium`, press **Enter** and wait for the download. Then type `npm run e2e`, press **Enter** and **don't touch anything for about 5 minutes**.
-   ✅ The last line says **`… passed`** and nothing says **failed**.
+   ✅ The last line says **`10 passed`** and nothing says **failed**.
 4. 👉 Type `npm run bench` and press **Enter**.
-   ✅ One line per mode, ending with "Wrote docs/results/bench.csv and docs/results/RESULTS.md".
+   ✅ A table with one line per mode, ending with "Wrote docs/results/bench.csv and docs/results/RESULTS.md".
+
+### Optional: solo mode (`localhost:8080/solo`)
+
+Solo mode is the same demo **in one single page, without the relay server in the middle**: Alice, Eve's attacks and Bob all run inside the page. It is meant for putting CipherCam on a website (GitHub Pages or Vercel, see the README) so other people can try it. For the classroom, use the Stage.
+
+1. 👉 Open `localhost:8080/solo`. ✅ It looks like the Stage, with "solo" next to the name and "Everything runs in this one page — no server".
+2. 👉 Click the caption bar, then use the same keys (**→**, **0–8**, **R**, **A**). ✅ The same results as on the Stage: ECB outline (2), real video for Eve (3), star (4), the loop (5), red rejections (6), ✗ MISMATCH (7), ✓ MATCH (8).
+3. 👉 Press **6**, wait for "⛔ REPLAY REJECTED", then press **1**. ✅ The red alert disappears at once and Bob's counters start from 0 (a new call).
 
 ---
 
@@ -480,6 +519,7 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 |---|---|
 | The keys do nothing | Click once on the yellow caption bar at the bottom, then press the key again. |
 | Bob's panel is black | Wait 3 seconds. Then press **R**. |
+| Bob's checks say "🔑 New session — exchanging keys…" for more than 3 seconds | Press **R**. |
 | A panel is frozen or white | Press **R**. Still stuck: **right-click inside that panel → Reload frame**. Still stuck: press **F5**. |
 | A panel says "Another Alice/Bob page took over" | You opened `/alice` or `/bob` somewhere else. Close that tab, then click the message (or press **F5**). |
 | Red dot "reconnecting…" | The black window was closed. Double-click `start-demo.bat` again; the page reconnects by itself. |
@@ -491,7 +531,7 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 
 | What you see | What to do |
 |---|---|
-| Step 2: no outline in Eve's panel | Check Eve's badge says **Block colours** (press **2** again). With a webcam: Grey levels **3**, plain wall, dark shirt. |
+| Step 2: no outline in Eve's panel | Check Eve's badge says **Block colours** (press **2** again). With a webcam: side menu **Grey levels 3**, plain wall, dark shirt — or switch **📷 Video → Synthetic**. |
 | Step 3: Eve shows noise, "No reuse detected" | The mode must be **AES-CTR — BUG: nonce reused**. Press **3** again. |
 | Step 4: no star on Bob | The mode must be a non-secure one such as AES-CTR (in GCM the star is rejected — that's the fix!). Press **4** again. |
 | Step 5: Bob doesn't show the person after they leave | Wait for the "⟲ Eve loops" message (about 9 seconds after pressing 5). Press **5** again and don't press other keys. |
@@ -503,7 +543,7 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 
 | What you see | What to do |
 |---|---|
-| "Camera not available" | Close Zoom/Teams/Camera. Check the privacy shutter and Windows **Settings → Privacy & security → Camera** (camera access ON, browser allowed). Choose **📷 Video → Webcam** again. |
+| "Camera not available" | Close Zoom/Teams/Camera. Check the privacy shutter and Windows **Settings → Privacy & security → Camera** (camera access ON, browser allowed). Choose **📷 Video → Webcam** again. Still failing? Use **📷 Video → Synthetic** — every attack works with it. |
 | The browser never asked for the camera | Click the 🔒 or camera icon at the left of the address bar → set **Camera: Allow** → press **F5**. |
 | The camera works but the ECB outline is unclear | See [section 9](#9-test-with-your-webcam), step 4. |
 
@@ -520,6 +560,7 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 - [ ] The black window says **CipherCam is running** (section 3)
 - [ ] The Stage opens; green **● connected**; Alice and Bob show video; Eve shows noise; **✓ MATCH** (section 5)
 - [ ] Auto-play (**A**) runs all steps 0–8 by itself (section 6)
+- [ ] **R** resets: step 1, new safety numbers, ✓ MATCH, counters back to 0 (section 5)
 
 **The five attacks** (section 7)
 - [ ] 1 ECB: outline visible in Eve's blocks, leak ~90% → fix: CTR, leak 0%
@@ -534,6 +575,8 @@ You don't need these pages for the demo, but it is good to check them once. **Cl
 
 **Extras**
 - [ ] Webcam: my outline appears in step 2 (section 9)
+- [ ] **📷 Video → Synthetic** brings the cartoon person back (section 9)
 - [ ] Keys **R**, **F**, **?**, **←**, **→** work (section 5)
 - [ ] `/selftest`: ✓ All 13 tests passed (section 10)
-- [ ] (optional) `npm test`: `# fail 0` (section 11)
+- [ ] (optional) `npm test`: `# pass 54`, `# fail 0` (section 11)
+- [ ] (optional) `/solo`: steps 2–8 work in one page (section 11)

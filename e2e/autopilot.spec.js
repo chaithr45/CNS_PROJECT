@@ -2,7 +2,7 @@
 // with every step's promise checked through window.__ciphercam and screenshots saved.
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
-import { watchErrors, controller, sleep } from './helpers.js';
+import { watchErrors, controller, sleep, layoutProblems } from './helpers.js';
 import { STEPS } from '../shared/steps.js';
 
 const RES = [[1366, 768], [1920, 1080]];
@@ -32,6 +32,9 @@ async function checkStep(page, n) {
   }
   // Past the 1-second "Connecting…" splash: live video is flowing in this session.
   await expect.poll(() => hook(page, () => window.__ciphercam.alice?.sid === window.__ciphercam.state.sid && window.__ciphercam.alice.seq >= 16), t).toBe(true);
+  // Alice, Eve and Bob are all in the same (new) session.
+  await expect.poll(() => hook(page, () => { const c = window.__ciphercam; return c.eve.stats.sid === c.state.sid && c.bob.sid === c.state.sid; }), t).toBe(true);
+  expect(await hook(page, () => window.__ciphercam.state.mitmActive)).toBe(!!STEPS[n].config.attacks?.mitm?.on);
   if (e.leakMin !== undefined) await expect.poll(() => hook(page, () => window.__ciphercam.leak), t).toBeGreaterThan(e.leakMin);
   if (e.leakMax !== undefined) {
     await expect.poll(() => hook(page, () => window.__ciphercam.eve.stats.mode === window.__ciphercam.state.mode && window.__ciphercam.eve.stats.frames > 12), t).toBe(true);
@@ -63,14 +66,20 @@ for (const [w, h] of RES) {
     await page.keyboard.press('r');
     await expect.poll(() => hook(page, () => window.__ciphercam.step)).toBe(1);
     await page.keyboard.press('0');
+    const numbers = [];
     for (let n = 0; n < STEPS.length; n++) {
       if (n > 0) await page.keyboard.press('ArrowRight');
       await checkStep(page, n);
+      // Every step is a new session with new ECDH keys → a new safety number.
+      await expect.poll(() => hook(page, () => window.__ciphercam.safetyMatch), { timeout: 20_000 }).not.toBeNull();
+      numbers.push(await hook(page, () => window.__ciphercam.safety.alice));
       await sleep(n === 2 || n === 3 ? 1500 : 600);
       const dims = await hook(page, () => [document.documentElement.scrollWidth, document.documentElement.scrollHeight]);
       expect(dims, 'Stage fits the screen without scrolling').toEqual([w, h]);
+      expect(await layoutProblems(page), `step ${n} at ${w}×${h}: no overlapping or cut-off elements`).toEqual([]);
       await page.screenshot({ path: `docs/screenshots/step-${n}-${w}.png` });
     }
+    expect(new Set(numbers).size, `fresh safety number per step: ${numbers.join(' | ')}`).toBe(STEPS.length);
     // Step 6 sub-action buttons work on their own too.
     await page.keyboard.press('6');
     await checkStep(page, 6);
@@ -80,6 +89,7 @@ for (const [w, h] of RES) {
     // F toggles the clean view, ? the help overlay
     await page.keyboard.press('f');
     await expect(page.locator('body')).toHaveClass(/clean/);
+    expect(await layoutProblems(page), 'clean view: no overlapping elements').toEqual([]);
     await page.screenshot({ path: `docs/screenshots/clean-${w}.png` });
     await page.keyboard.press('f');
     await page.keyboard.press('?');
@@ -109,6 +119,13 @@ test('step 6 sub-actions: "Try bit-flip" and "Try replay" are both rejected', as
   await sleep(3800);
   await page.getByRole('button', { name: 'Try replay' }).click();
   await expect.poll(() => hook(page, () => window.__ciphercam.counters.replay), { timeout: 15_000 }).toBeGreaterThan(3);
+  await expect(page.locator('#bobAlert')).toContainText('REPLAY REJECTED');
+  // Regression: leaving the step clears Bob's old alert and counters on the Stage at once.
+  await page.keyboard.press('8');
+  await page.waitForTimeout(300);
+  expect(await page.locator('#bobAlert').textContent()).not.toContain('REJECTED');
+  expect(await page.locator('#cRep').textContent()).toBe('⟲ replayed 0');
+  expect(await page.locator('#cTam').textContent()).toBe('🛡 tampered 0');
   await page.keyboard.press('r');
   expect(errors).toEqual([]);
   await ctx.close();

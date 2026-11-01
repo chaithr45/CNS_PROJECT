@@ -31,6 +31,8 @@ drives everything from the `/stage` page on a Windows laptop with a projector.
 | `npm run bench` | Per-mode benchmark → `docs/results/` |
 | `npm run vectors` | Regenerate `test/vectors.json` with node:crypto |
 | `npm run soak` | 10-minute auto-play soak test |
+| `npm run video` | Re-record the backup demo video (docs/backup-demo.webm/.mp4) |
+| `npm run build:solo` | Build the static solo-mode site into dist-solo/ |
 
 ## Folder map
 ```

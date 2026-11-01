@@ -94,7 +94,8 @@ async function startSession(s) {
   $('#wait').textContent = 'New session — waiting for the first valid frame…';
   $('#wait').classList.remove('hidden');
   $('#alertBar').classList.add('hidden');
-  lastBadAt = 0; lastLoggedKind = null;
+  clearTimeout(alertTimer);
+  lastBadAt = 0; lastOkAt = 0; lastLoggedKind = null;
   last = { ok: null, kind: null, reason: 'new session', at: Date.now() };
   setStatus('New session: key exchange…');
   showSafety();
@@ -102,11 +103,16 @@ async function startSession(s) {
   if (my !== gen) return;
   session.kp = kp;
   sendHello();
+  // Alice's key may have arrived while ours was still being made: use it now.
+  if (session.earlyHello) onHello(session.earlyHello).catch((e) => setStatus(`Key exchange failed: ${e.message}`, 'bad'));
 }
 function sendHello() { if (session?.kp) net.send({ t: 'hello', sid: session.sid, role: 'bob', pub: toBase64(session.kp.pubRaw) }); }
 
 async function onHello(h) {
-  if (!session || h.sid !== session.sid || !session.kp) return;
+  if (!session || h.sid !== session.sid) return;
+  // Alice was faster than our own key generation: keep her key until ours is ready
+  // (dropping it would leave this session stuck with a black screen).
+  if (!session.kp) { session.earlyHello = h; return; }
   const my = gen;
   const peer = fromBase64(h.pub);
   const keys = await deriveSessionKeys(session.kp.privateKey, peer, h.sid);  // ECDH + HKDF
@@ -128,8 +134,10 @@ function flashAlert(reason) {
 }
 
 async function onFrame(headerBytes, payload) {
-  if (!session) return;
-  const r = await receiveFrame(session.rx, headerBytes, payload);
+  const s = session;
+  if (!s) return;
+  const r = await receiveFrame(s.rx, headerBytes, payload);
+  if (s !== session) return;            // a new session started while this frame was being checked
   if (r.header?.mode) {
     mode = r.header.mode;
     const integ = MODES[mode].integrity;

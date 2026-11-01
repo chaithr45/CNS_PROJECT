@@ -10,7 +10,7 @@
 
 ## Abstract
 
-CipherCam is a live, browser-based encrypted video call that demonstrates five classic failures in the *use* of cryptography and their standard fixes. Alice streams 160×120 grayscale video at 10 frames per second through a Node.js WebSocket relay to Bob; Eve, an attacker inside the relay, performs passive and active attacks. Using only standard primitives from the browser's Web Crypto API (AES-CBC, AES-CTR, AES-GCM, HMAC-SHA256, ECDH P-256, HKDF), plus the `aes-js` library for AES-ECB, the system shows that (1) ECB leaks the outline of a person (89.6 % of ciphertext blocks repeat), (2) a reused CTR nonce lets Eve recover the keystream from a public "Connecting…" test card and watch the call, (3) bit-flipping stamps an attacker-chosen shape onto Bob's video, (4) replayed frames make Bob see a person who has left the room, and (5) a man-in-the-middle on an unauthenticated ECDH exchange defeats even AES-GCM. The fixes (randomized modes, unique nonces, AEAD/HMAC, an authenticated frame counter and safety-number comparison) reject 100 % of tampered and replayed frames and expose the MITM, at a cost of 28 bytes and about 0.1 ms per frame. AES itself is never broken. The implementation is verified against OpenSSL and the FIPS-197 test vector, with 48 automated unit/integration tests and an end-to-end browser test of every demo step.
+CipherCam is a live, browser-based encrypted video call that demonstrates five classic failures in the *use* of cryptography and their standard fixes. Alice streams 160×120 grayscale video at 10 frames per second through a Node.js WebSocket relay to Bob; Eve, an attacker inside the relay, performs passive and active attacks. Using only standard primitives from the browser's Web Crypto API (AES-CBC, AES-CTR, AES-GCM, HMAC-SHA256, ECDH P-256, HKDF), plus the `aes-js` library for AES-ECB, the system shows that (1) ECB leaks the outline of a person (89.6 % of ciphertext blocks repeat), (2) a reused CTR nonce lets Eve recover the keystream from a public "Connecting…" test card and watch the call, (3) bit-flipping stamps an attacker-chosen shape onto Bob's video, (4) replayed frames make Bob see a person who has left the room, and (5) a man-in-the-middle on an unauthenticated ECDH exchange defeats even AES-GCM. The fixes (randomized modes, unique nonces, AEAD/HMAC, an authenticated frame counter and safety-number comparison) reject 100 % of tampered and replayed frames and expose the MITM, at a cost of 28 bytes and about 0.15 ms per frame. AES itself is never broken. The implementation is verified against OpenSSL and the FIPS-197 test vector, with 54 automated unit/integration tests (including an independent OpenSSL re-implementation of the receiver and of every attack) and an end-to-end browser test of every demo step.
 
 ## 1. Introduction and motivation
 
@@ -97,34 +97,35 @@ The frame header (`sid, seq, mode, iv, w, h, levels, ts`) is sent as UTF-8 JSON;
 ## 5. Implementation
 
 - **Stack:** Node.js 20+ (ES modules), `ws` WebSocket server, vanilla HTML/CSS/JS (no framework, no build step), Web Crypto for all primitives except ECB (`aes-js` 3.1.2). Fully offline after installation.
-- **Pages:** `/stage` (projector view with three embedded panels, scripted demo steps, captions and keyboard shortcuts), `/alice`, `/bob`, `/eve`, `/watch` (read-only phone view that needs no Web Crypto, so it works over plain HTTP on the LAN), `/selftest`.
+- **Pages:** `/stage` (projector view with three embedded panels, scripted demo steps, captions, keyboard shortcuts and the mode / video-source / grey-level controls), `/alice`, `/bob`, `/eve`, `/watch` (read-only phone view that needs no Web Crypto, so it works over plain HTTP on the LAN), `/selftest`, and an optional `/solo` page that runs Alice, the relay with Eve's attacks, and Bob in one page (also buildable as a static site for GitHub Pages or Vercel).
 - **Demo automation:** nine steps defined once in `shared/steps.js`; each sets the complete configuration and restarts the session, so any step is reachable from any other without leftover state. Auto-play (`A`) runs the whole demo with captions.
 - **Robustness:** auto-reconnecting WebSockets, one Alice/one Bob with clean replacement, session restarts under 1 s, frame dropping for slow clients, watcher cap and throttling, control accepted from localhost only.
-- **Code size:** about 3,500 lines (application code, including comments); every cryptographic line is commented in plain English.
+- **Code size:** about 4,100 lines of application code (server, shared modules, pages, styles; including comments); every cryptographic line is commented in plain English.
 
 ## 6. Attack lab results
 
 ### 6.1 Correctness
 
-- `npm test`: **48 tests pass**, including byte-for-byte equality with OpenSSL (`node:crypto`) for ECB, CBC, CTR, GCM, HMAC-SHA256 and HKDF, ECDH agreement with an independent ECDH implementation, and the FIPS-197 Appendix C.1 vector (`69c4e0d86a7b0430d8cdb78070b4c55a`).
+- `npm test`: **54 tests pass**, including byte-for-byte equality with OpenSSL (`node:crypto`) for ECB, CBC, CTR, GCM, HMAC-SHA256 and HKDF, ECDH agreement with an independent ECDH implementation, and the FIPS-197 Appendix C.1 vector (`69c4e0d86a7b0430d8cdb78070b4c55a`).
+- **Independent end-to-end check** (`test/independent.test.js`): Bob, Eve's analysis, ECDH, HKDF, all AES modes, HMAC and the safety number are re-implemented with OpenSSL only and run against the application's real sender through the real relay. Every frame on the wire is byte-identical to OpenSSL's output in all seven modes; each attack has exactly the predicted effect on the bytes (ECB equal blocks, exact keystream recovery, `P ⊕ M` after bit-flipping, accepted replays in CTR, valid-tag-but-old-counter rejections in GCM/CTR+HMAC, accepted MITM frames with mismatching safety numbers); and the application's receiver agrees with the OpenSSL receiver on every frame.
 - `/selftest`: **13/13 known-answer tests pass** in Chromium, including that the browser's splash frame is byte-identical to Node's.
-- `npm run e2e`: Playwright drives the Stage through all nine steps at 1366×768 and 1920×1080 and asserts each step's claim (e.g. leak > 50 % for ECB, keystream "recovered" for nonce reuse, tamper and replay counters rising in GCM, safety numbers mismatching under MITM).
+- `npm run e2e`: Playwright drives the Stage through all nine steps at 1366×768 and 1920×1080 and asserts each step's claim (e.g. leak > 50 % for ECB, keystream "recovered" for nonce reuse, tamper and replay counters rising in GCM, safety numbers mismatching under MITM), that Alice, Eve and Bob are in the same fresh session with a new safety number at every step, and that no element of the Stage overlaps another or is cut off at either resolution.
 
-### 6.2 Measurements (`npm run bench`, 1,000 frames per mode, Node.js 22, Intel Xeon 2.1 GHz)
+### 6.2 Measurements (`npm run bench`, 1,000 frames per mode, Node.js 22, Intel Xeon 2.8 GHz; timings vary by about ±30 % between runs, the leak and reject rates do not)
 
 | Mode | Encrypt ms/frame | Decrypt ms/frame | Overhead B/frame | Leak meter | Bit-flipped frames rejected | Replayed frames rejected |
 |---|---:|---:|---:|---:|---:|---:|
-| plain | 0.05 | 0.05 | 0 | 89.6 % | 0 % | 0 % |
-| ecb | 0.79 | 0.77 | 0 | 89.6 % | 0 % | 0 % |
-| cbc | 0.29 | 0.17 | 32 | 0.0 % | 0 % | 0 % |
-| ctr | 0.19 | 0.19 | 16 | 0.0 % | 0 % | 0 % |
-| ctr-reuse | 0.15 | 0.18 | 16 | 0.0 % | 0 % | 0 % |
-| ctr-hmac | 0.22 | 0.16 | 48 | 0.0 % | **100 %** | **100 %** |
-| gcm | 0.10 | 0.11 | 28 | 0.0 % | **100 %** | **100 %** |
+| plain | 0.06 | 0.08 | 0 | 89.6 % | 0 % | 0 % |
+| ecb | 0.97 | 0.85 | 0 | 89.6 % | 0 % | 0 % |
+| cbc | 0.21 | 0.17 | 32 | 0.0 % | 0 % | 0 % |
+| ctr | 0.15 | 0.15 | 16 | 0.0 % | 0 % | 0 % |
+| ctr-reuse | 0.12 | 0.14 | 16 | 0.0 % | 0 % | 0 % |
+| ctr-hmac | 0.35 | 0.26 | 48 | 0.0 % | **100 %** | **100 %** |
+| gcm | 0.14 | 0.15 | 28 | 0.0 % | **100 %** | **100 %** |
 
-MITM in GCM: Bob accepted **100/100** re-encrypted frames; the safety numbers differed (e.g. `2929 4654 3764` vs `0690 8823 8149`).
+MITM in GCM: Bob accepted **100/100** re-encrypted frames; the safety numbers differed (e.g. `8590 5039 5959` vs `2377 8050 4571`).
 
-In the browser, with all three Stage panels open in headless Chromium, Bob sustained **10.0 fps** in AES-GCM with about 4 ms end-to-end latency (`docs/results/e2e-fps.json`). In a **10-minute auto-play soak test** (`docs/results/SOAK.md`) there were **0 console errors**, Bob never accepted fewer than 220 frames in any 30-second window, and memory stayed flat (browser heap 6.0 → 5.5 MB, server heap 43.7 → 44.1 MB).
+In the browser, with all three Stage panels open in headless Chromium, Bob sustained **10.0 fps** in AES-GCM with about 3 ms end-to-end latency (`docs/results/e2e-fps.json`). In a **10-minute auto-play soak test** (`docs/results/SOAK.md`) there were **0 console errors**, Bob never accepted fewer than 220 frames in any 30-second window, and memory stayed flat (browser heap 6.0 → 5.5 MB, server heap 43.7 → 44.1 MB).
 
 ### 6.3 Discussion
 
@@ -132,7 +133,7 @@ In the browser, with all three Stage panels open in headless Chromium, Bob susta
 2. **The leak meter cannot see nonce reuse.** Within one frame the reused keystream is still pseudorandom (0 %); the failure is *between* frames. With one known plaintext frame, Eve reconstructs the live video exactly (Figure 3). The unit tests confirm `C₁ ⊕ C₂ = P₁ ⊕ P₂` and exact keystream recovery.
 3. **Encryption ≠ integrity.** Without a MAC, 0 % of tampered frames are rejected; CTR delivers exactly `P ⊕ M` (Figure 4). CBC garbles the stamped blocks but still accepts them.
 4. **Integrity ≠ freshness.** Replayed CTR frames are all accepted (Figure 5). Only an authenticated counter rejects them.
-5. **Security is cheap.** AES-GCM adds 28 bytes (0.15 %) and was the fastest mode measured; the whole budget at 10 fps is 100 ms per frame.
+5. **Security is cheap.** AES-GCM adds 28 bytes (0.15 %) and about 0.15 ms per frame — the same as unauthenticated CTR — out of a budget of 100 ms per frame at 10 fps.
 6. **AEAD does not authenticate the peer.** Under MITM every GCM tag verifies; only comparing safety numbers reveals Eve (Figure 7).
 
 ### 6.4 Figures
@@ -155,7 +156,7 @@ In the browser, with all three Stage panels open in headless Chromium, Bob susta
 - The video is deliberately small (160×120, 4 grey levels) so that the ECB leak is visible on a projector; real codecs compress before encrypting, which changes the leak's appearance but not the principle.
 - Eve is a process on the same laptop; there is no real network adversary, NAT traversal or packet loss. The strict `seq > lastSeq` rule would need a sliding window over an unordered transport (as in IPsec/DTLS).
 - The out-of-band channel is simulated with a `BroadcastChannel`; real systems compare fingerprints by voice, QR code or in person.
-- No long-term identity keys, certificates or audio; safety numbers are 12 digits (~40 bits), adequate for a live human check but shorter than Signal's 60 digits.
+- No long-term identity keys, certificates or audio. Safety numbers are 12 digits (~40 bits). Against the demo's Eve (random keys) a false match has probability 10⁻¹², but because Eve chooses both substituted keys after seeing the real ones, a determined attacker could search for a colliding pair with about 2²⁰ trials per side; deployed systems prevent this with a hash commitment to the public key (ZRTP) or long-term identity keys and 60-digit numbers (Signal).
 - A real webcam must be tuned on the presenter's laptop (lighting, background, grey levels); the cloud test environment uses a synthetic scene and Chromium's fake camera.
 
 ## 8. Conclusion

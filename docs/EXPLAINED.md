@@ -263,6 +263,8 @@ SHA-256("CipherCam safety" ‖ smaller key ‖ larger key) → first 6 bytes →
 
 Sorting the two keys means Alice and Bob compute the same number. If Eve swapped the keys, Alice fingerprints (A, E1) and Bob fingerprints (E2, B): **different numbers**. Alice and Bob compare them over another channel ("out-of-band", e.g. reading them aloud), and Eve is caught. Signal and WhatsApp do exactly this.
 
+**Honest caveat.** 12 digits is about 40 bits. Our Eve uses random keys, so a false "match" happens once in 10¹² sessions. A cleverer Eve, who chooses both of her keys after seeing Alice's and Bob's, could search for a colliding pair in about a million tries per side. Real systems stop that with a *commitment* (ZRTP: each side sends a hash of its key first) or with long-term identity keys and longer numbers (Signal: 60 digits). See VIVA_QA question 36.
+
 **Code.** `shared/crypto.js` → `safetyNumber`. The out-of-band channel in the demo is a `BroadcastChannel` between the pages on the laptop (`public/js/common.js` → `oobChannel`).
 
 ---
