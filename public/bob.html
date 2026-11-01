@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — Bob (receiver)</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/vendor/aes-js/index.js"></script>
+</head>
+<body class="role-bob">
+  <header class="topbar">
+    <h1>📺 Bob — receiver</h1>
+    <span class="muted no-embed">He checks, decrypts and shows.</span>
+    <span class="spacer"></span>
+    <span id="conn" class="conn">connecting…</span>
+  </header>
+  <main class="page">
+    <section class="main-col stack">
+      <div class="screen">
+        <canvas id="video" aria-label="What Bob receives"></canvas>
+        <div class="corner"><span id="integ" class="badge">Integrity: OFF</span></div>
+        <div id="wait" class="overlay-msg">Waiting for Alice…</div>
+        <div id="alertBar" class="banner-red hidden" role="alert"></div>
+      </div>
+      <div class="embed-info embed-only">
+        <span id="eStatus" class="badge">…</span>
+        <span class="badge">🔑 <span id="eSafety" class="mono">…</span></span>
+        <span id="eAcc" class="badge ok">✓ 0</span>
+        <span id="eRej" class="badge">✗ 0</span>
+      </div>
+      <div class="card no-embed">
+        <h2>Safety number</h2>
+        <div id="safety" class="safety pending">waiting for the key exchange…</div>
+        <div id="oob" class="small muted">Out-of-band check (like reading the numbers aloud): —</div>
+      </div>
+    </section>
+    <aside class="stack no-embed">
+      <div class="card stack">
+        <h2>Last frame</h2>
+        <div id="status" class="alert">Waiting for Alice…</div>
+        <div class="row">
+          <span id="modeBadge" class="badge">mode</span>
+          <span id="lat" class="badge">latency —</span>
+          <span id="fps" class="badge">0 fps</span>
+        </div>
+      </div>
+      <div class="card stack">
+        <h2>Counters</h2>
+        <div class="counters">
+          <div class="counter ok">accepted<b id="cAcc">0</b></div>
+          <div class="counter bad">🛡 tampered<b id="cTamper">0</b></div>
+          <div class="counter bad">⟲ replayed<b id="cReplay">0</b></div>
+          <div class="counter bad">⚠ decrypt errors<b id="cDecrypt">0</b></div>
+        </div>
+        <button id="csv" class="btn">⬇ Download stats CSV</button>
+      </div>
+      <div class="card small muted">
+        Bob only checks anything in the two secure modes (CTR+HMAC and AES-GCM): the tag must be valid,
+        and the frame counter must be higher than the last accepted frame. In every other mode he shows
+        whatever decrypts — that is the point of the demo.
+      </div>
+    </aside>
+  </main>
+  <script type="module" src="/js/bob.js"></script>
+</body>
+</html>

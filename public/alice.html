@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — Alice (sender)</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/vendor/aes-js/index.js"></script>
+</head>
+<body class="role-alice">
+  <header class="topbar">
+    <h1>🎥 Alice — sender</h1>
+    <span class="muted no-embed">She films, encrypts and sends.</span>
+    <span class="spacer"></span>
+    <span id="conn" class="conn">connecting…</span>
+  </header>
+  <main class="page">
+    <section class="main-col stack">
+      <div class="screen">
+        <canvas id="preview" aria-label="What Alice is sending"></canvas>
+        <div class="corner"><span id="srcBadge" class="badge">◎ synthetic</span><span id="splashBadge" class="badge warn hidden">Connecting… test card</span></div>
+        <div id="wait" class="overlay-msg hidden">Waiting for Bob…</div>
+      </div>
+      <div class="embed-info embed-only">
+        <span id="eModeBadge" class="badge">mode</span>
+        <span class="badge">🔑 <span id="eSafety" class="mono">…</span></span>
+        <span id="eSeq" class="badge">seq 0</span>
+      </div>
+      <div class="card no-embed">
+        <h2>Safety number</h2>
+        <div id="safety" class="safety pending">waiting for the key exchange…</div>
+        <div id="oob" class="small muted">Out-of-band check (like reading the numbers aloud): —</div>
+      </div>
+    </section>
+    <aside class="stack no-embed">
+      <div class="card stack">
+        <h2>Call</h2>
+        <div id="status" class="alert">Starting…</div>
+        <label class="field">Encryption mode
+          <select id="mode"></select>
+        </label>
+        <label class="field">Video source
+          <select id="source">
+            <option value="synthetic">Synthetic scene (always works)</option>
+            <option value="webcam">Webcam</option>
+          </select>
+        </label>
+        <label class="toggle"><input type="checkbox" id="away"> Person leaves the room (synthetic)</label>
+        <label class="toggle"><input type="checkbox" id="wave"> Keep waving (synthetic)</label>
+        <button id="restart" class="btn">⟳ Restart session (new keys)</button>
+      </div>
+      <div class="card stack">
+        <h2>Picture</h2>
+        <label class="field">Grey levels: <b id="levelsV">4</b>
+          <input type="range" id="levels" min="2" max="6" step="1" value="4">
+        </label>
+        <label class="field">Frames per second: <b id="fpsV">10</b>
+          <input type="range" id="fps" min="5" max="15" step="1" value="10">
+        </label>
+        <label class="field">Flicker margin (hysteresis): <b id="marginV">6</b>
+          <input type="range" id="margin" min="0" max="20" step="1" value="6">
+        </label>
+        <div class="small muted">Sending <span id="rate">0</span> KB/s · frame <span id="seq">0</span></div>
+      </div>
+      <div class="card">
+        <details>
+          <summary>📷 Camera tuning tips</summary>
+          <ul class="small">
+            <li>Sit 1–1.5 m from the camera, head and shoulders in view.</li>
+            <li>Plain, light wall behind you. Light on your face, not behind you.</li>
+            <li>A dark shirt makes the ECB outline much clearer.</li>
+            <li>If the ECB picture is too busy, lower <b>Grey levels</b> to 3. If you vanish into the wall, raise it to 5.</li>
+            <li>If edges flicker, raise the <b>Flicker margin</b> to 8–10.</li>
+            <li>Camera not working? Pick <b>Synthetic scene</b> — the demo works the same.</li>
+          </ul>
+        </details>
+      </div>
+      <video id="video" class="hidden" playsinline muted></video>
+    </aside>
+  </main>
+  <script type="module" src="/js/alice.js"></script>
+</body>
+</html>

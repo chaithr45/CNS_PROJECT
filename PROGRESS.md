@@ -5,7 +5,7 @@ Last updated: 2026-11-01 — session 1: scaffold
 P1 + P2.1 done (45 tests green). Server already implements Eve's active attacks (bit-flip, replay, MITM) and they pass integration tests; the browser pages are next.
 
 ## NEXT STEP
-P2.2/P2.3: browser pages. Create `public/css/app.css`, `public/js/common.js` (secure-context banner, embed mode, toast, aes-js injection), `public/js/net.js` (WebSocket with auto-reconnect + indicator), `public/alice.html` + `public/js/alice.js` (webcam/synthetic, pipeline, splash, handshake, encrypt, safety number via BroadcastChannel 'ciphercam-oob'), `public/bob.html` + `public/js/bob.js` (receive, checks, alerts, counters, CSV). Logic mirrors `test/sim-clients.js` (simAlice/simBob), which already works against the server.
+P3.1: `public/eve.html` + `public/js/eve-view.js` (pure-JS passive views: raw, block colours, XOR-with-previous, keystream recovery; leak meter; nonce-reuse detector; MITM 'EVE HAS THE KEY' view from `eve-plain` frames) + `public/js/eve.js` (panel: view selector, stamp picker with mask preview, Record/Loop/Stop, MITM toggle). Then P3.2 `/watch` + landing page `/` with QR. P2.4 Playwright smoke test comes after the Eve page (needs playwright.config.js + e2e/smoke.spec.js).
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -14,8 +14,8 @@ P2.2/P2.3: browser pages. Create `public/css/app.css`, `public/js/common.js` (se
 - [x] P1.3 shared/protocol.js, sender.js, receiver.js (verified: all 7 modes round-trip through the wire format)
 - [x] P1.4 Unit tests for P1, `npm test` green (verified: `npm test` → 36 pass, 0 fail; includes attack-property tests using server/eve-active.js)
 - [x] P2.1 server (static, relay, state, localhost rule, port fallback, banner+QR, open browser) (verified: test/server.test.js 9 integration tests; `node server/index.js --no-open` printed banner with Stage URL, LAN /watch URL and terminal QR)
-- [ ] P2.2 /alice
-- [ ] P2.3 /bob
+- [x] P2.2 /alice (verified: Playwright quick check — Alice sends at 10 fps / 189 KB/s, safety number shown, no console errors)
+- [x] P2.3 /bob (verified: Bob accepted 34 frames at 10 fps, latency 2 ms, same safety number as Alice; counters + CSV button present)
 - [ ] P2.4 Playwright smoke: Bob shows frames in every mode + screenshots
 - [ ] P3.1 /eve passive views, leak meter, nonce-reuse detector, keystream recovery
 - [ ] P3.2 /watch + QR codes on / and /stage
