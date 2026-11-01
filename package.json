@@ -1,0 +1,27 @@
+{
+  "name": "ciphercam",
+  "version": "1.0.0",
+  "description": "CipherCam: a live encrypted video call in the browser that shows five classic crypto mistakes (ECB, nonce reuse, bit-flipping, replay, MITM) and their fixes.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server/index.js --no-open",
+    "demo": "node server/index.js",
+    "test": "node --test test/",
+    "e2e": "playwright test",
+    "bench": "node bench/bench.js",
+    "vectors": "node test/make-vectors.js",
+    "soak": "node e2e/soak.js",
+    "build:solo": "node solo/build.js"
+  },
+  "dependencies": {
+    "aes-js": "3.1.2",
+    "qrcode": "1.5.4",
+    "ws": "8.22.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
