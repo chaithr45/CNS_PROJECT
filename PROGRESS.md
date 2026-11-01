@@ -5,7 +5,7 @@ Last updated: 2026-11-01 — session 1: scaffold
 P1 + P2.1 done (45 tests green). Server already implements Eve's active attacks (bit-flip, replay, MITM) and they pass integration tests; the browser pages are next.
 
 ## NEXT STEP
-P3.1: `public/eve.html` + `public/js/eve-view.js` (pure-JS passive views: raw, block colours, XOR-with-previous, keystream recovery; leak meter; nonce-reuse detector; MITM 'EVE HAS THE KEY' view from `eve-plain` frames) + `public/js/eve.js` (panel: view selector, stamp picker with mask preview, Record/Loop/Stop, MITM toggle). Then P3.2 `/watch` + landing page `/` with QR. P2.4 Playwright smoke test comes after the Eve page (needs playwright.config.js + e2e/smoke.spec.js).
+P3.2: check `/watch` (public/watch.html + js/watch.js) and landing `/` (public/index.html + js/landing.js, QR via /api/qr.svg) render; QR on /stage comes with P5.1. Then P2.4: `playwright.config.js` (webServer = `node server/index.js --no-open --port 8199`, Chromium with fake media flags) + `e2e/smoke.spec.js` (Bob shows frames in every mode, screenshots to docs/screenshots/smoke-<mode>.png). Quick dev scripts live in e2e/.tmp/ (git-ignored).
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -17,7 +17,7 @@ P3.1: `public/eve.html` + `public/js/eve-view.js` (pure-JS passive views: raw, b
 - [x] P2.2 /alice (verified: Playwright quick check — Alice sends at 10 fps / 189 KB/s, safety number shown, no console errors)
 - [x] P2.3 /bob (verified: Bob accepted 34 frames at 10 fps, latency 2 ms, same safety number as Alice; counters + CSV button present)
 - [ ] P2.4 Playwright smoke: Bob shows frames in every mode + screenshots
-- [ ] P3.1 /eve passive views, leak meter, nonce-reuse detector, keystream recovery
+- [x] P3.1 /eve passive views, leak meter, nonce-reuse detector, keystream recovery (verified: Playwright run over all views — ECB block view leak 92 % with clear silhouette, ctr 0 %; ctr-reuse keystream 'recovered' + nonceReuse {seq, firstSeq 0}; ctr shows 'No reuse detected — attack fails'; MITM shows 'EVE HAS THE KEY'; screenshots inspected)
 - [ ] P3.2 /watch + QR codes on / and /stage
 - [ ] P4.1 Bit-flip stamps
 - [ ] P4.2 Replay record & loop

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — Eve (attacker)</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body class="role-eve">
+  <header class="topbar">
+    <h1>😈 Eve — attacker in the relay</h1>
+    <span class="muted no-embed">Like a hacked Wi-Fi router: she sees every packet and can change them.</span>
+    <span class="spacer"></span>
+    <span id="conn" class="conn">connecting…</span>
+  </header>
+  <main class="page">
+    <section class="main-col stack">
+      <div class="screen" id="eveScreen"></div>
+      <div class="embed-info embed-only" data-eve="leakbox" id="leakboxE">
+        <span class="badge">Leak meter <b data-eve="leak">0%</b></span>
+        <div class="meter" style="flex:1;min-width:80px"><div data-eve="leakbar"></div></div>
+      </div>
+      <div class="card no-embed" data-eve="leakbox">
+        <h2>Leak meter</h2>
+        <div class="row"><b style="font-size:28px" data-eve="leak">0%</b><span class="muted">of the 1,200 ciphertext blocks in this frame are an exact copy of another block</span></div>
+        <div class="meter"><div data-eve="leakbar"></div></div>
+      </div>
+    </section>
+    <aside class="stack no-embed">
+      <div class="card stack">
+        <h2>👁 Passive: what Eve looks at</h2>
+        <div class="row" id="views"></div>
+        <div id="explain" class="small muted"></div>
+      </div>
+      <div class="card stack">
+        <h2>✏ Active: bit-flip stamp</h2>
+        <div class="row" id="stamps"></div>
+        <div class="row"><canvas id="maskPreview" style="width:120px;height:90px;image-rendering:pixelated;border:1px solid var(--border);border-radius:6px;background:#000"></canvas>
+          <button id="bitflip" class="btn danger">Bit-flip: OFF</button></div>
+        <div class="small muted">Eve XORs 0xFF into every ciphertext byte under the white shape, on every frame going to Bob. She never touches the tag.</div>
+      </div>
+      <div class="card stack">
+        <h2>⟲ Active: replay ("CCTV loop")</h2>
+        <div class="row">
+          <label class="field" style="width:110px">Seconds <input id="secs" type="number" min="1" max="15" value="5" style="width:100%;padding:6px;background:var(--panel-2);border:1px solid var(--border);border-radius:6px"></label>
+          <button id="rec" class="btn">● Record</button>
+          <button id="loop" class="btn">⟲ Loop</button>
+          <button id="stop" class="btn">■ Stop</button>
+        </div>
+        <div id="replayStatus" class="small">Replay: off</div>
+      </div>
+      <div class="card stack">
+        <h2>🔀 Active: man-in-the-middle</h2>
+        <button id="mitm" class="btn danger">MITM: OFF</button>
+        <div class="small muted">Eve swaps the ECDH public keys in the hello messages. Takes effect on restart — CipherCam restarts the session automatically when you toggle it.</div>
+      </div>
+    </aside>
+  </main>
+  <script type="module" src="/js/eve.js"></script>
+</body>
+</html>

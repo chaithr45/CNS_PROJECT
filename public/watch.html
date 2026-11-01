@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CipherCam — what the attacker sees</title>
+  <link rel="stylesheet" href="/css/app.css">
+  <style>
+    body { display: flex; flex-direction: column; min-height: 100vh; }
+    .w-head { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--panel); border-bottom: 1px solid var(--border); }
+    .w-head h1 { font-size: 18px; color: var(--eve); margin: 0; }
+    .w-main { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 10px; max-width: 900px; width: 100%; margin: 0 auto; }
+    .w-caption { font-size: 20px; font-weight: 700; }
+    .w-step { color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body class="role-eve">
+  <div class="w-head"><h1>😈 What the attacker sees</h1><span class="spacer" style="flex:1"></span><span id="conn" class="conn">connecting…</span></div>
+  <main class="w-main">
+    <div class="w-step" id="step">CipherCam live demo</div>
+    <div class="w-caption" id="caption">Connecting to the presenter's laptop…</div>
+    <div class="screen" id="eveScreen"></div>
+    <div class="row" data-eve="leakbox"><span class="badge">Leak meter <b data-eve="leak">0%</b></span><div class="meter" style="flex:1"><div data-eve="leakbar"></div></div></div>
+    <div class="small muted">Read-only view. You are watching the same encrypted traffic Eve sees in the network. No camera, no keys.</div>
+  </main>
+  <script type="module" src="/js/watch.js"></script>
+</body>
+</html>
