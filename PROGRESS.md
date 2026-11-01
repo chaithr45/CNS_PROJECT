@@ -5,7 +5,7 @@ Last updated: 2026-11-01 — session 1: scaffold
 P1 + P2.1 done (45 tests green). Server already implements Eve's active attacks (bit-flip, replay, MITM) and they pass integration tests; the browser pages are next.
 
 ## NEXT STEP
-P3.2: check `/watch` (public/watch.html + js/watch.js) and landing `/` (public/index.html + js/landing.js, QR via /api/qr.svg) render; QR on /stage comes with P5.1. Then P2.4: `playwright.config.js` (webServer = `node server/index.js --no-open --port 8199`, Chromium with fake media flags) + `e2e/smoke.spec.js` (Bob shows frames in every mode, screenshots to docs/screenshots/smoke-<mode>.png). Quick dev scripts live in e2e/.tmp/ (git-ignored).
+P4.1–P4.3 UI check: Eve panel controls (stamp picker/preview, bit-flip toggle, Record/Loop/Stop, MITM toggle) already exist in public/eve.html + js/eve.js and the relay logic is tested (test/server.test.js). Verify each by clicking in Playwright (e2e/.tmp script), then tick P4.1–P4.4. Then P5.1 Stage: `public/stage.html` + `public/js/stage.js` + stage CSS (3 iframes ?embed=1, caption bar, safety ✓/✗ via BroadcastChannel 'ciphercam-oob', Bob alert area, event log, steps sidebar, QR for /watch).
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -16,9 +16,9 @@ P3.2: check `/watch` (public/watch.html + js/watch.js) and landing `/` (public/i
 - [x] P2.1 server (static, relay, state, localhost rule, port fallback, banner+QR, open browser) (verified: test/server.test.js 9 integration tests; `node server/index.js --no-open` printed banner with Stage URL, LAN /watch URL and terminal QR)
 - [x] P2.2 /alice (verified: Playwright quick check — Alice sends at 10 fps / 189 KB/s, safety number shown, no console errors)
 - [x] P2.3 /bob (verified: Bob accepted 34 frames at 10 fps, latency 2 ms, same safety number as Alice; counters + CSV button present)
-- [ ] P2.4 Playwright smoke: Bob shows frames in every mode + screenshots
+- [x] P2.4 Playwright smoke: Bob shows frames in every mode + screenshots (verified: `npx playwright test e2e/smoke.spec.js` → 2 passed; docs/screenshots/smoke-bob-<mode>.png for all 7 modes, no console errors)
 - [x] P3.1 /eve passive views, leak meter, nonce-reuse detector, keystream recovery (verified: Playwright run over all views — ECB block view leak 92 % with clear silhouette, ctr 0 %; ctr-reuse keystream 'recovered' + nonceReuse {seq, firstSeq 0}; ctr shows 'No reuse detected — attack fails'; MITM shows 'EVE HAS THE KEY'; screenshots inspected)
-- [ ] P3.2 /watch + QR codes on / and /stage
+- [x] P3.2 /watch + QR codes on / and /stage (verified: e2e loads http://<LAN-IP>:8199/watch, isSecureContext=false, >3 frames rendered, phone cannot connect as stage (4003); landing page QR inspected. Stage QR is added in P5.1.)
 - [ ] P4.1 Bit-flip stamps
 - [ ] P4.2 Replay record & loop
 - [ ] P4.3 MITM
@@ -46,6 +46,7 @@ npm test
 ```
 
 ## Decision log
+- 2026-11-01 Playwright launches Chromium with `--proxy-server=direct://` — the cloud container sets HTTPS_PROXY and Chromium otherwise sends ws:// to the LAN IP through that proxy (403). Irrelevant on the student's laptop, harmless there.
 - 2026-11-01 Stamp masks (star / HACKED / smiley) are drawn with pure maths in `shared/stamps.js` instead of canvas text — identical bytes in browser and Node, so the relay can build the mask itself and tests can check it. Eve's panel shows a preview canvas of the same mask.
 - 2026-11-01 `npm test` runs `test/run-all.js`, which passes the explicit file list to `node --test` (shell globs don't work in Windows cmd and Node 20 has no built-in glob).
 - 2026-11-01 Receiver rebuilds the GCM nonce from its own nonceSalt + seq instead of trusting the header IV (header IV is still sent, for Eve's nonce-reuse detector).
