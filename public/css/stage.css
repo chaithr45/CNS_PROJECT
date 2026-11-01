@@ -75,6 +75,9 @@ body.stage { overflow: hidden; font-size: 18px; }
 .st-sub .btn { font-size: 16px; padding: 6px 8px; }
 .st-nav { display: flex; gap: 6px; }
 .st-nav .btn { flex: 1; font-size: 16px; padding: 6px 4px; }
+.st-cam { display: flex; gap: 6px; }
+.st-field { display: grid; gap: 2px; font-size: 15px; color: var(--muted); flex: 1; }
+.st-field select { padding: 4px 6px; font-size: 15px; width: 100%; }
 .st-qr { margin-top: auto; display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center; }
 .st-qr-img { background: #fff; padding: 4px; border-radius: 6px; width: 120px; height: 120px; }
 .st-qr-img svg { width: 100%; height: 100%; display: block; }

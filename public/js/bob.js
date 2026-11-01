@@ -26,7 +26,18 @@ const csvRows = [];
 let secAcc = 0, secRej = { tamper: 0, replay: 0, decrypt: 0 };
 let alertTimer = null;
 
-const net = connectWS('bob', { onMessage, indicator: $('#conn') });
+const net = connectWS('bob', { onMessage, indicator: $('#conn'), onReplaced });
+
+// Another Bob page (e.g. a second tab) took over. Offer a one-click way back.
+function onReplaced() {
+  const w = $('#wait');
+  w.textContent = '⚠ Another Bob page took over. Click here to use this one again.';
+  w.classList.remove('hidden');
+  w.style.cursor = 'pointer';
+  w.onclick = () => { w.onclick = null; w.style.cursor = ''; w.textContent = 'Reconnecting…'; replacedAt = Date.now(); net.reconnect(); };
+  replacedAt = Infinity;
+}
+let replacedAt = 0;
 
 function setStatus(text, cls = '') {
   $('#status').className = `alert ${cls}`;

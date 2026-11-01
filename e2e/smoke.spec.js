@@ -23,6 +23,17 @@ test('Bob receives and shows frames in every mode (Alice, Eve, Bob pages)', asyn
     expect(st.c.tamper + st.c.replay + st.c.decrypt).toBe(0);
     await pages.bob.screenshot({ path: `docs/screenshots/smoke-bob-${mode}.png` });
   }
+  // Pictures of the separate pages for docs/HOW_TO_TEST.md
+  ctl.control({ mode: 'gcm', restart: true, eveView: 'raw' });
+  await expect.poll(() => pages.bob.evaluate(() => window.__ciphercam.mode), { timeout: 10_000 }).toBe('gcm');
+  await pages.alice.waitForTimeout(2500);
+  await pages.alice.screenshot({ path: 'docs/screenshots/page-alice.png' });
+  await pages.bob.screenshot({ path: 'docs/screenshots/page-bob.png' });
+  await pages.eve.screenshot({ path: 'docs/screenshots/page-eve.png' });
+  const home = await ctx.newPage();
+  await home.goto('/');
+  await home.waitForTimeout(800);
+  await home.screenshot({ path: 'docs/screenshots/page-home.png' });
   ctl.close();
   expect(errors).toEqual([]);
   await ctx.close();

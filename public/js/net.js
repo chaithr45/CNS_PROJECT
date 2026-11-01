@@ -2,7 +2,7 @@
 import { encodeMessage, decodeMessage } from '/shared/protocol.js';
 
 // connectWS(role, { onMessage(msg), onOpen(), onClose() , indicator: element })
-export function connectWS(role, { onMessage, onOpen, onClose, indicator } = {}) {
+export function connectWS(role, { onMessage, onOpen, onClose, onReplaced, indicator } = {}) {
   let ws = null;
   let delay = 400;
   let stopped = false;
@@ -21,7 +21,7 @@ export function connectWS(role, { onMessage, onOpen, onClose, indicator } = {}) 
     };
     ws.onclose = (ev) => {
       onClose?.(ev);
-      if (ev.code === 4000) { stopped = true; show('off', 'replaced by a newer tab'); return; }
+      if (ev.code === 4000) { stopped = true; show('off', 'replaced by a newer tab'); onReplaced?.(); return; }
       if (ev.code === 4003) { stopped = true; show('off', 'not allowed from this device'); return; }
       if (ev.code === 4029) { stopped = true; show('off', 'too many viewers'); return; }
       if (stopped) return;
@@ -42,5 +42,7 @@ export function connectWS(role, { onMessage, onOpen, onClose, indicator } = {}) 
     restart() { return this.send({ t: 'restart' }); },
     event(text, level = 'info') { return this.send({ t: 'event', text, level }); },
     close() { stopped = true; ws?.close(); },
+    // Connect again after being replaced (this page takes over again).
+    reconnect() { if (ws && ws.readyState <= 1) return; stopped = false; delay = 400; open(); },
   };
 }

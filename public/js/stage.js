@@ -117,6 +117,14 @@ $('#next').onclick = () => { stopAuto(); goStep((state?.step ?? current) + 1); }
 $('#reset').onclick = reset;
 $('#auto').onclick = () => (autoplay ? stopAuto() : startAuto(0));
 $('#clean').onclick = () => document.body.classList.toggle('clean');
+for (const [id, m] of Object.entries(MODES)) {
+  const o = document.createElement('option');
+  o.value = id; o.textContent = m.label;
+  $('#modeSel').appendChild(o);
+}
+$('#modeSel').onchange = (e) => { net.control({ mode: e.target.value }); e.target.blur(); };
+$('#srcSel').onchange = (e) => { net.control({ source: e.target.value }); e.target.blur(); }; // blur: arrow keys go back to the steps
+$('#lvlSel').onchange = (e) => { net.control({ levels: parseInt(e.target.value, 10) }); e.target.blur(); };
 $('#helpBtn').onclick = () => $('#help').classList.toggle('hidden');
 $('#helpClose').onclick = () => $('#help').classList.add('hidden');
 
@@ -170,6 +178,9 @@ function renderSafety() {
 function render() {
   if (!state) return;
   current = state.step;
+  if (document.activeElement !== $('#modeSel')) $('#modeSel').value = state.mode;
+  if (document.activeElement !== $('#srcSel')) $('#srcSel').value = state.source;
+  if (document.activeElement !== $('#lvlSel')) $('#lvlSel').value = String(state.levels);
   const s = STEPS[state.step];
   const icon = state.mode === 'plain' ? '🚫' : MODES[state.mode].secure ? '🔒' : '⚠';
   $('#modeBadge').textContent = `${icon} ${MODES[state.mode].label}${state.mitmActive ? '  ·  🔀 MITM ACTIVE' : ''}`;

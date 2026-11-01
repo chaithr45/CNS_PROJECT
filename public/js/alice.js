@@ -33,7 +33,18 @@ for (const id of MODE_IDS) {
   o.value = id; o.textContent = MODES[id].label;
   $('#mode').appendChild(o);
 }
-const net = connectWS('alice', { onMessage, indicator: $('#conn') });
+const net = connectWS('alice', { onMessage, indicator: $('#conn'), onReplaced });
+
+// Another Alice page (e.g. a second tab) took over. Offer a one-click way back.
+function onReplaced() {
+  const w = $('#wait');
+  w.textContent = '⚠ Another Alice page took over. Click here to use this one again.';
+  w.classList.remove('hidden');
+  w.style.cursor = 'pointer';
+  w.onclick = () => { w.onclick = null; w.style.cursor = ''; w.textContent = 'Reconnecting…'; replacedAt = Date.now(); net.reconnect(); };
+  replacedAt = Infinity;
+}
+let replacedAt = 0;
 
 $('#mode').onchange = (e) => net.control({ mode: e.target.value });
 $('#source').onchange = (e) => net.control({ source: e.target.value });
@@ -181,6 +192,7 @@ async function tick() {
       screen.gray(out);
       $('#splashBadge').classList.toggle('hidden', !(canSend && s.seq < SPLASH_FRAMES));
       $('#wait').classList.toggle('hidden', !!canSend);
+      if (!canSend && replacedAt !== Infinity) $('#wait').textContent = net.connected ? 'Waiting for Bob…' : 'Connecting to the relay…';
       if (canSend && !busy) {
         if (net.bufferedAmount > 200 * 1024) { stats.skipped++; }          // network is backed up: skip
         else {

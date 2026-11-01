@@ -75,6 +75,17 @@
         <button id="auto" class="btn" title="Auto-play the demo (A)">▶ Auto</button>
         <button id="clean" class="btn" title="Hide controls (F)">⛶ Clean</button>
       </div>
+      <label class="st-field">🔒 Encryption mode
+        <select id="modeSel"></select>
+      </label>
+      <div class="st-cam">
+        <label class="st-field">📷 Video
+          <select id="srcSel"><option value="synthetic">Synthetic scene</option><option value="webcam">Webcam</option></select>
+        </label>
+        <label class="st-field">Grey levels
+          <select id="lvlSel"><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select>
+        </label>
+      </div>
       <div class="st-qr">
         <div id="qr" class="st-qr-img"></div>
         <div class="small"><b>📱 Phones:</b> <span id="qrUrl" class="mono">…</span></div>

@@ -45,6 +45,7 @@ $('#bitflip').onclick = () => net.control({ attacks: { bitflip: { on: !state.att
 $('#rec').onclick = () => net.control({ attacks: { replay: { phase: 'recording', seconds: parseInt($('#secs').value, 10) || 5 } } });
 $('#loop').onclick = () => net.control({ attacks: { replay: { phase: 'looping' } } });
 $('#stop').onclick = () => net.control({ attacks: { replay: { phase: 'off' } } });
+$('#away').onchange = (e) => net.control({ away: e.target.checked });
 $('#mitm').onclick = () => net.control({ attacks: { mitm: { on: !state.attacks.mitm.on } } });
 
 let lastStamp = null;
@@ -58,6 +59,7 @@ function render() {
   $('#bitflip').classList.toggle('active', state.attacks.bitflip.on);
   $('#mitm').textContent = `MITM: ${state.attacks.mitm.on ? 'ON 🔀' : 'OFF'}${state.attacks.mitm.on && state.mitmActive ? ' (active in this session)' : ''}`;
   $('#mitm').classList.toggle('active', state.attacks.mitm.on);
+  $('#away').checked = state.away;
   const r = state.attacks.replay;
   const txt = { off: 'Replay: off', recording: `● Recording… ${r.recorded.toFixed(1)} / ${r.seconds} s`, ready: `Recorded ${r.recorded.toFixed(1)} s — press Loop`, looping: '⟲ LOOPING old frames to Bob (live video blocked)' };
   $('#replayStatus').textContent = txt[r.phase] || r.phase;
