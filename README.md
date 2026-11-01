@@ -42,6 +42,10 @@ After the first `npm install`, **everything works offline**: no CDN, no web font
 
 ---
 
+## Testing it yourself
+
+New to all this? **[docs/HOW_TO_TEST.md](docs/HOW_TO_TEST.md)** walks you through installing, starting, and testing every screen, all five attacks and secure mode, click by click, with pictures and a troubleshooting table.
+
 ## Giving the demo
 
 Read **[docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md)**: setup, checklists, what to press and what to say for every step, timing, camera tuning and a recovery playbook. Print **[docs/DEMO_CHEATSHEET.md](docs/DEMO_CHEATSHEET.md)**.
@@ -96,6 +100,7 @@ Only the presenter laptop (`localhost`) can change anything. Phones can only wat
 
 | Document | For |
 |---|---|
+| [docs/HOW_TO_TEST.md](docs/HOW_TO_TEST.md) | **Start here if you are new:** click-by-click guide to starting and testing everything |
 | [docs/DEMO_GUIDE.md](docs/DEMO_GUIDE.md) | Giving the live demo, step by step |
 | [docs/DEMO_CHEATSHEET.md](docs/DEMO_CHEATSHEET.md) | One printable page |
 | [docs/EXPLAINED.md](docs/EXPLAINED.md) | Every concept in plain English, with pointers to the code |
