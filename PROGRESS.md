@@ -2,10 +2,10 @@
 Last updated: 2026-11-01 — session 1: scaffold
 
 ## Status
-Phase 1 done (shared core + 36 passing tests). Phase 2 (server + Alice/Bob pages) next.
+P1 + P2.1 done (45 tests green). Server already implements Eve's active attacks (bit-flip, replay, MITM) and they pass integration tests; the browser pages are next.
 
 ## NEXT STEP
-P2.1: write `server/index.js` (CLI flags --port --no-open --allow-remote-control), `server/app.js` (createServer(opts) → {start, stop, port, state}; static serving of public/, /shared, /vendor/aes-js, /vendor/qrcode; WebSocket relay at /ws?role=…; state + control patches; localhost-only rule; port fallback 8080-8090; banner + terminal QR; open browser). `server/eve-active.js` already exists (bit-flip, replay recorder, MITM) and is tested.
+P2.2/P2.3: browser pages. Create `public/css/app.css`, `public/js/common.js` (secure-context banner, embed mode, toast, aes-js injection), `public/js/net.js` (WebSocket with auto-reconnect + indicator), `public/alice.html` + `public/js/alice.js` (webcam/synthetic, pipeline, splash, handshake, encrypt, safety number via BroadcastChannel 'ciphercam-oob'), `public/bob.html` + `public/js/bob.js` (receive, checks, alerts, counters, CSV). Logic mirrors `test/sim-clients.js` (simAlice/simBob), which already works against the server.
 
 ## Checklist
 - [x] P0.1 Spec saved, CLAUDE.md/PROGRESS.md/README/.gitignore/package.json, deps installed (verified: `npm install` → 0 vulnerabilities, `npx playwright --version` → 1.63.0)
@@ -13,7 +13,7 @@ P2.1: write `server/index.js` (CLI flags --port --no-open --allow-remote-control
 - [x] P1.2 shared/crypto.js + shared/ecb.js (verified: test/crypto.test.js — FIPS-197 C.1, ECB/CBC/CTR/GCM/HMAC/HKDF/ECDH identical to node:crypto/OpenSSL)
 - [x] P1.3 shared/protocol.js, sender.js, receiver.js (verified: all 7 modes round-trip through the wire format)
 - [x] P1.4 Unit tests for P1, `npm test` green (verified: `npm test` → 36 pass, 0 fail; includes attack-property tests using server/eve-active.js)
-- [ ] P2.1 server (static, relay, state, localhost rule, port fallback, banner+QR, open browser)
+- [x] P2.1 server (static, relay, state, localhost rule, port fallback, banner+QR, open browser) (verified: test/server.test.js 9 integration tests; `node server/index.js --no-open` printed banner with Stage URL, LAN /watch URL and terminal QR)
 - [ ] P2.2 /alice
 - [ ] P2.3 /bob
 - [ ] P2.4 Playwright smoke: Bob shows frames in every mode + screenshots
