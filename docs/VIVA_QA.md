@@ -81,7 +81,7 @@ Random IV / unique nonce → **confidentiality**. MAC / AEAD tag → **data inte
 **So Eve can't change `seq`, `mode` or the IV without being caught.** If `seq` weren't authenticated, she could renumber old frames and defeat the replay check.
 
 **23. What is AEAD? Why use GCM instead of CTR + HMAC?**
-**AEAD = Authenticated Encryption with Associated Data: one primitive gives confidentiality plus integrity of the ciphertext and of extra unencrypted data (our header).** GCM is standard, fast (hardware support), has one key and a 16-byte tag, and is harder to misuse than a hand-made composition. Both are secure here; our bench shows GCM is also the fastest mode.
+**AEAD = Authenticated Encryption with Associated Data: one primitive gives confidentiality plus integrity of the ciphertext and of extra unencrypted data (our header).** GCM is standard, fast (hardware support), has one key and a 16-byte tag, and is harder to misuse than a hand-made composition. Both are secure here; our bench shows GCM costs no more time than plain CTR (about 0.15 ms per frame) and less than CTR + HMAC.
 
 **24. Why separate keys for AES and HMAC?**
 **Using one key for two different algorithms can let one leak information about the other; key separation is a basic rule.** HKDF gives us independent-looking keys from one secret.
@@ -147,7 +147,7 @@ Random IV / unique nonce → **confidentiality**. MAC / AEAD tag → **data inte
 **`npm test`: 54 unit/integration tests**, including OpenSSL cross-checks for every mode, FIPS-197, attack properties (ECB leak > 50%, `C₁⊕C₂ = P₁⊕P₂`, bit-flip = original ⊕ mask, replays rejected, MITM detected), the real server with simulated clients, and an **independent re-check of all five attacks** (question 44). **`npm run e2e`**: Playwright drives the real Stage in Chromium through every step at two resolutions. **`npm run bench`** measures every mode. **`npm run soak`**: a 10-minute auto-play loop.
 
 **41. What overhead does security add?**
-**GCM adds 28 bytes per frame (12-byte nonce + 16-byte tag) on 19,200 bytes, about 0.15%, and is actually the fastest mode in our benchmark (~0.1 ms per frame).** See `docs/results/RESULTS.md`.
+**GCM adds 28 bytes per frame (12-byte nonce + 16-byte tag) on 19,200 bytes, about 0.15%, and about 0.15 ms of computing per frame — the same as unauthenticated CTR, out of a 100 ms budget at 10 fps.** See `docs/results/RESULTS.md`.
 
 **42. What are the limitations?**
 **The video is tiny (160×120, 4 grey levels) so the ECB leak is visible; the relay is a trusted laptop process playing Eve; the safety-number channel is simulated; there is no audio, no NAT traversal and no long-term identity keys.** Real systems (WebRTC + SRTP/DTLS, Signal) use the same ideas at full scale.

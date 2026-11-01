@@ -1,5 +1,5 @@
 {
-  "when": "2026-11-01T04:13:59.391Z",
+  "when": "2026-11-01T05:22:31.952Z",
   "mode": "gcm",
   "panels": 3,
   "samples": [
@@ -15,6 +15,6 @@
     10
   ],
   "averageFps": 10,
-  "latencyMs": 2,
+  "latencyMs": 3,
   "machine": "linux x64, headless Chromium"
 }
